@@ -1,0 +1,23 @@
+{
+  "name": "inovatio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.12.10",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.9",
+    "gulp-sass": "^2.3.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "run-sequence": "^1.2.1",
+    "gulp-strip-css-comments": "^1.2.0"
+  },
+  "dependencies": {
+    "hmh": "^2.0.4"
+  }
+}
