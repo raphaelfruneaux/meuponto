@@ -24,8 +24,26 @@
 			    </div>
 			  </div>
 		  </form>
-		  <div class="ui submit button">Exportar para JSON</div>
+			<div class="ui label">
+			  Horas trabalhadas:
+			  <div class="detail"> 08h 33m</div>
+			</div>
+			<div class="ui label">
+			  Pontos registrados:
+			  <div class="detail">{{pontos.length == 0 ? 'nenhum' : pontos.length}}</div>
+			</div>
 		</div>
+		<div class="ui inverted segment">
+		  <div class="ui inverted relaxed divided list">
+		    <div class="item" ng-repeat="p in pontos">
+		      <div class="content">
+		        <div class="header">{{$index %2==0 ? 'Entrada' : 'Saída'}}</div>
+		        {{p}}
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	  <div class="ui submit button">Exportar para JSON</div>
 	</div>
 </body>
 </html>
