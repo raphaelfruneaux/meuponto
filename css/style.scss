@@ -4,3 +4,12 @@
 	padding: 0;
 	margin: 0;
 }
+
+.ui.horizontal.list>.item {
+	.icon {
+		vertical-align: baseline;
+	}
+	&>.content {
+		padding: 0;
+	}
+}

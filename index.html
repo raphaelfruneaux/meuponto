@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="node_modules/angular-ui-mask/dist/mask.min.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<link rel="stylesheet" href="css/semantic.min.css">
+	<link rel="stylesheet" href="css/icon.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
 <body ng-controller="CounterController">
@@ -33,7 +34,15 @@
 			  <div class="detail">{{pontos.length == 0 ? 'nenhum' : pontos.length}}</div>
 			</div>
 		</div>
-		<div class="ui inverted segment">
+		<div class="ui mini horizontal divided list">
+		  <div class="item" ng-repeat="p in pontos">
+		    <i class="wait icon"></i>
+		    <div class="content">
+		      <div class="header">{{p}}</div>
+		    </div>
+		  </div>
+		</div>
+		<!-- <div class="ui inverted segment">
 		  <div class="ui inverted relaxed divided list">
 		    <div class="item" ng-repeat="p in pontos">
 		      <div class="content">
@@ -42,8 +51,10 @@
 		      </div>
 		    </div>
 		  </div>
-		</div>
-	  <div class="ui submit button">Exportar para JSON</div>
+		</div> -->
+	  <div class="row">
+	  	<div class="ui submit button">Exportar para JSON</div>
+	  </div>
 	</div>
 </body>
 </html>
