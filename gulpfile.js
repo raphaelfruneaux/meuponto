@@ -24,7 +24,9 @@ gulp.task('sass', function(){
 gulp.task('browser-sync', function () {
 
     browsersync.init({
-        proxy: "localhost:90/ponto",
+        server: {
+          baseDir: './'
+        }
     });
 });
 
