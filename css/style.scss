@@ -1,3 +1,9 @@
+$default_color: #7b7b7b;
+
+body {
+	color: $default_color;
+}
+
 .hidden {
 	visibility: hidden;
 	height: 0;
@@ -15,4 +21,32 @@
 	&>.content {
 		padding: 0;
 	}
+}
+
+.ui.horizontal.list.pontos-list {
+	margin-top: 0;
+  padding: 20px;
+	background: #e0e1e2;
+	border-radius: 5px;
+	div.item {
+		margin-top: 10px;
+	}
+}
+
+.column.pontos-statistics, .ui.statistics {
+	text-align: center;
+	display: block;
+	.statistic {
+		.value {
+			text-transform: none;
+		}
+	}
+	.worked-hours {
+		display: block;
+	}
+}
+
+.bottom-bar {
+	position: absolute;
+	bottom: 30px;
 }
