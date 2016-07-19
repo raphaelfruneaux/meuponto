@@ -18,6 +18,7 @@
     "gulp-strip-css-comments": "^1.2.0"
   },
   "dependencies": {
+    "angular-ui-mask": "^1.8.6",
     "hmh": "^2.0.4"
   }
 }
