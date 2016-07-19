@@ -27,7 +27,7 @@
 		  </form>
 			<div class="ui label">
 			  Horas trabalhadas:
-			  <div class="detail"> 08h 33m</div>
+			  <div class="detail">{{ horasTrabalhadas() }}</div>
 			</div>
 			<div class="ui label red">
 			  Banco de horas:
@@ -35,14 +35,14 @@
 			</div>
 			<div class="ui label">
 			  Pontos registrados:
-			  <div class="detail">{{pontos.length == 0 ? 'nenhum' : pontos.length}}</div>
+			  <div class="detail">{{ pontos.length == 0 ? 'nenhum' : pontos.length }}</div>
 			</div>
 		</div>
 		<div class="ui mini horizontal divided list">
 		  <div class="item" ng-repeat="p in pontos">
 		    <i class="wait icon"></i>
 		    <div class="content">
-		      <div class="header">{{p}}</div>
+		      <div class="header">{{ p }}</div>
 		    </div>
 		  </div>
 		</div>
