@@ -1,3 +1,9 @@
+$default_color: #a5a5a5;
+
+body {
+	color: $default_color;
+}
+
 .hidden {
 	visibility: hidden;
 	height: 0;
@@ -14,5 +20,21 @@
 	}
 	&>.content {
 		padding: 0;
+	}
+}
+
+.bottom-bar {
+	position: absolute;
+	bottom: 40px;
+}
+
+.head {
+	.field {
+		display: inline-block;
+	}
+	.date {
+		display: inline-block;
+		font-size: 20px;
+		vertical-align: -webkit-baseline-middle;
 	}
 }

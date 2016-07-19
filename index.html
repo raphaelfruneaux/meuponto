@@ -15,17 +15,22 @@
 <body ng-controller="CounterController">
 	<div class="ui container">
 		<h1>Counter</h1>
-		<div class="ui form">
-		  <form ng-submit="addPonto()">
-		  	<div class="fields">
+		<div class="head">
+			<div class="ui form">
+			  <form ng-submit="addPonto()">
 			    <div class="field">
 			      <label>Ponto</label>
-			      <input type="text" ng-model="ponto" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
+			      <input class="input_ponto" type="text" ng-model="ponto" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
 			      <input type="submit" id="submit" value="Submit" class="hidden"/>
 			    </div>
-			  </div>
-		  </form>
-			<div class="ui label">
+			    <div class="date">
+			    	<i class="calendar icon"></i> 18 de julho, 2016
+			    </div>
+			  </form>
+			</div>
+		</div>
+		<div class="info">
+				<div class="ui label">
 			  Horas trabalhadas:
 			  <div class="detail"> 08h 33m</div>
 			</div>
@@ -38,7 +43,7 @@
 			  <div class="detail">{{pontos.length == 0 ? 'nenhum' : pontos.length}}</div>
 			</div>
 		</div>
-		<div class="ui mini horizontal divided list">
+		<div class="ui mini horizontal divided list pontos">
 		  <div class="item" ng-repeat="p in pontos">
 		    <i class="wait icon"></i>
 		    <div class="content">
@@ -56,8 +61,15 @@
 		    </div>
 		  </div>
 		</div> -->
-	  <div class="row">
-	  	<div class="ui submit button">Exportar para JSON</div>
+	  <div class="bottom-bar">
+		  <button class="ui blue basic button">
+			  <i class="icon download"></i>
+			  Importar JSON
+			</button>
+		  <button class="ui green basic button">
+			  <i class="icon upload"></i>
+			  Exportar para JSON
+			</button>
 	  </div>
 	</div>
 </body>
