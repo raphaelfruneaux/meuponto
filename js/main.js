@@ -1,7 +1,15 @@
 
 var myApp = angular.module('myApp',['ui.mask']);
 
-  myApp.controller('CounterController', ['$scope', '$filter', function($scope, $filter) {
+  myApp.controller('CounterController', ['$scope', '$filter', '$interval', function($scope, $filter, $interval) {
+
+		Date.prototype.today = function () {
+	    return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
+		}
+
+		Date.prototype.timeNow = function () {
+	    return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+		}
 
     var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
     if (!dataStorage) {
@@ -14,7 +22,8 @@ var myApp = angular.module('myApp',['ui.mask']);
       var pontoEletronico = dataStorage;
     }
 
-    var today = new Date().toISOString().match(/\d{4}-\d{2}-\d{2}/).join('-');
+		var date = new Date();
+    var today = date.toISOString().match(/\d{4}-\d{2}-\d{2}/).join('-');
     var current = $filter('filter')(pontoEletronico.user.registros, {date: today})[0];
 
 
@@ -30,6 +39,7 @@ var myApp = angular.module('myApp',['ui.mask']);
 
     $scope.ponto = '';
     $scope.pontos = current.pontos;
+		$scope.horarioAtual = date.timeNow();
 
     $scope.addPonto = function () {
       if ($scope.ponto) {
@@ -41,15 +51,25 @@ var myApp = angular.module('myApp',['ui.mask']);
 
     $scope.horasTrabalhadas = function () {
       var diffs = [];
+			var pontosAux = angular.copy($scope.pontos);
 
-      for (i in $scope.pontos) {
+			if (pontosAux.length % 2 != 0) {
+				pontosAux.push(angular.copy($scope.horarioAtual).match(/\d{2}:\d{2}/).join(':'));
+			}
+
+      for (i in pontosAux) {
         if (i % 2 != 0) {
-          diffs.push(hmh.diff(toHMH($scope.pontos[i-1]), toHMH($scope.pontos[i])).toString().replace(/\s+/g, ''));
+					console.log(pontosAux[i-1], pontosAux[i]);
+          diffs.push(hmh.diff(toHMH(pontosAux[i-1]), toHMH(pontosAux[i])).toString().replace(/\s+/g, ''));
         }
       }
 
       return hmh.sum(diffs).toString() || 0;
     };
+
+		$interval(function () {
+			$scope.horarioAtual = new Date().timeNow();
+		}, 1000);
 
     function formatPonto (p) {
       return p.charAt(0) + p.charAt(1) + ":" + p.charAt(2) + p.charAt(3);
@@ -59,4 +79,5 @@ var myApp = angular.module('myApp',['ui.mask']);
       p = p.match(/\d+/g).join('');
       return p.charAt(0) + p.charAt(1) + "h" + p.charAt(2) + p.charAt(3) + "m";
     }
+
   }]);
