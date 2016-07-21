@@ -59,7 +59,6 @@ var myApp = angular.module('myApp',['ui.mask']);
 
       for (i in pontosAux) {
         if (i % 2 != 0) {
-					console.log(pontosAux[i-1], pontosAux[i]);
           diffs.push(hmh.diff(toHMH(pontosAux[i-1]), toHMH(pontosAux[i])).toString().replace(/\s+/g, ''));
         }
       }
