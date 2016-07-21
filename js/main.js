@@ -1,37 +1,61 @@
 
 var myApp = angular.module('myApp',['ui.mask']);
 
-myApp.controller('CounterController', ['$scope', function($scope) {
-	console.log(hmh);
-	
-	$scope.ponto = '';
-	$scope.pontos = [];
+  myApp.controller('CounterController', ['$scope', '$filter', function($scope, $filter) {
 
-	$scope.addPonto = function () {
-  	if ($scope.ponto) {
-	  	$scope.pontos.push(formatPonto(angular.copy($scope.ponto)));
-			$scope.ponto = '';
-  	}
-  };
+    var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
+    if (!dataStorage) {
+        var pontoEletronico = {user: {}};
+        pontoEletronico.user.name = prompt("Informe o seu nome:");
+        pontoEletronico.user.email = prompt("Informe o seu email:");
+        pontoEletronico.user.registros = [];
+        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+    } else {
+      var pontoEletronico = dataStorage;
+    }
 
-	$scope.horasTrabalhadas = function () {
-		var diffs = [];
+    var today = new Date().toISOString().match(/\d{4}-\d{2}-\d{2}/).join('-');
+    var current = $filter('filter')(pontoEletronico.user.registros, {date: today})[0];
 
-		for (i in $scope.pontos) {
-			if (i % 2 != 0) {
-				diffs.push(hmh.diff(toHMH($scope.pontos[i-1]), toHMH($scope.pontos[i])).toString().replace(/\s+/g, ''));
-			}
-		}
+    if (current.length < 1) {
+      var registro = {
+        date: today,
+        pontos: []
+      };
+      current = registro;
+      pontoEletronico.user.registros.push(registro);
+      localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+    }
 
-		return hmh.sum(diffs).toString() || 0;
-	};
+    $scope.ponto = '';
+    $scope.pontos = current.pontos;
 
-	function formatPonto (p) {
-  	return p.charAt(0) + p.charAt(1) + ":" + p.charAt(2) + p.charAt(3);
-  }
+    $scope.addPonto = function () {
+      if ($scope.ponto) {
+        $scope.pontos.push(formatPonto(angular.copy($scope.ponto)));
+        $scope.ponto = '';
+        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      }
+    };
 
-	function toHMH (p) {
-		p = p.match(/\d+/g).join('');
-		return p.charAt(0) + p.charAt(1) + "h" + p.charAt(2) + p.charAt(3) + "m";
-	}
-}]);
+    $scope.horasTrabalhadas = function () {
+      var diffs = [];
+
+      for (i in $scope.pontos) {
+        if (i % 2 != 0) {
+          diffs.push(hmh.diff(toHMH($scope.pontos[i-1]), toHMH($scope.pontos[i])).toString().replace(/\s+/g, ''));
+        }
+      }
+
+      return hmh.sum(diffs).toString() || 0;
+    };
+
+    function formatPonto (p) {
+      return p.charAt(0) + p.charAt(1) + ":" + p.charAt(2) + p.charAt(3);
+    }
+
+    function toHMH (p) {
+      p = p.match(/\d+/g).join('');
+      return p.charAt(0) + p.charAt(1) + "h" + p.charAt(2) + p.charAt(3) + "m";
+    }
+  }]);
