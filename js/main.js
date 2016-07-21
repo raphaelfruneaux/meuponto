@@ -17,7 +17,8 @@ var myApp = angular.module('myApp',['ui.mask']);
     var today = new Date().toISOString().match(/\d{4}-\d{2}-\d{2}/).join('-');
     var current = $filter('filter')(pontoEletronico.user.registros, {date: today})[0];
 
-    if (current.length < 1) {
+
+    if (!current || current.length < 1) {
       var registro = {
         date: today,
         pontos: []
