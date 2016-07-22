@@ -43,14 +43,60 @@
 			  <div class="detail">{{ pontos.length == 0 ? 'nenhum' : pontos.length }}</div>
 			</div>
 		</div>
-		<div class="ui mini horizontal divided list pontos">
-		  <div class="item" ng-repeat="p in pontos">
-		    <i class="wait icon"></i>
-		    <div class="content">
-		      <div class="header">{{ p }}</div>
-		    </div>
-		  </div>
-		</div>
+		<table class="ui very basic collapsing celled table">
+		  <tbody>
+		    <tr>
+		      <td>
+		        <h4 class="ui image header">
+		          <i class="disabled calendar icon"></i>
+		          <div class="content">
+		            Hoje
+		            <div class="sub header">Segunda-feira
+		          </div>
+		        </div>
+		      </h4></td>
+		      <td>
+		        <div class="ui mini horizontal divided list pontos">
+						  <div class="item" ng-repeat="p in pontos">
+						    <i class="wait icon"></i>
+						    <div class="content">
+						      <div class="header">{{ p }}</div>
+						    </div>
+						  </div>
+						</div>
+		      </td>
+		    </tr>
+		  </tbody>
+		</table>
+		<table class="ui very basic collapsing celled table">
+		  <thead>
+		    <tr><th>Dias anteriores</th>
+		    <th>Registros</th>
+		  </tr></thead>
+		  <tbody>
+		    <tr>
+		      <td>
+		        <h4 class="ui image header">
+		          <i class="disabled calendar icon"></i>
+		          <div class="content">
+		            12 de julho, 2016
+		            <div class="sub header">Segunda-feira
+		          </div>
+		        </div>
+		      </h4></td>
+		      <td>
+		        <div class="ui mini horizontal divided list pontos">
+						  <div class="item" ng-repeat="p in pontos">
+						    <i class="wait icon"></i>
+						    <div class="content">
+						      <div class="header">{{ p }}</div>
+						    </div>
+						  </div>
+						</div>
+		      </td>
+		    </tr>
+		  </tbody>
+		</table>
 		<!-- <div class="ui inverted segment">
 		  <div class="ui inverted relaxed divided list">
 		    <div class="item" ng-repeat="p in pontos">
