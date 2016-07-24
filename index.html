@@ -18,14 +18,18 @@
 		<div class="head">
 			<div class="ui form">
 			  <form ng-submit="addPonto()">
+					<div class="field">
+						<label>Data</label>
+						<input type="text" ng-model="data" ui-mask="99/99/9999" ui-mask-placeholder ui-mask-placeholder-char="_">
+					</div>
 			    <div class="field">
 			      <label>Ponto</label>
 			      <input class="input_ponto" type="text" ng-model="ponto" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
-			      <input type="submit" id="submit" value="Submit" class="hidden"/>
 			    </div>
 			    <div class="date">
-			    	<i class="calendar icon"></i> {{ dataAtual | date:'dd de M, yyyy - HH:mm:ss ' }} {{ horarioAtual }}
+			    	<i class="wait icon"></i> {{ horarioAtual }}
 			    </div>
+					<input type="submit" id="submit" value="Submit" class="hidden"/>
 			  </form>
 			</div>
 		</div>
@@ -51,7 +55,7 @@
 		          <i class="disabled calendar icon"></i>
 		          <div class="content">
 		            Hoje
-		            <div class="sub header">Segunda-feira
+		            <div class="sub header"> Segunda-feira
 		          </div>
 		        </div>
 		      </h4></td>
@@ -68,6 +72,7 @@
 		    </tr>
 		  </tbody>
 		</table>
+		<hr>
 		<table class="ui very basic collapsing celled table">
 		  <thead>
 		    <tr><th>Dias anteriores</th>
