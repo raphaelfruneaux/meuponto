@@ -39,6 +39,7 @@ var myApp = angular.module('myApp',['ui.mask']);
 
     $scope.ponto = '';
     $scope.pontos = current.pontos;
+    $scope.dataAtual = date;
 		$scope.horarioAtual = date.timeNow();
 
     $scope.addPonto = function () {
