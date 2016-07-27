@@ -20,6 +20,7 @@ var myApp = angular.module('myApp',['ui.mask']);
         localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
     } else {
       var pontoEletronico = dataStorage;
+      console.log(pontoEletronico)
     }
 
 		var date = new Date();
@@ -41,6 +42,7 @@ var myApp = angular.module('myApp',['ui.mask']);
     $scope.pontos = current.pontos;
     $scope.dataAtual = date;
 		$scope.horarioAtual = date.timeNow();
+    $scope.pontoEletronico = pontoEletronico;
 
     $scope.addPonto = function () {
       if ($scope.ponto) {

@@ -77,23 +77,23 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					<tr ng-repeat="registro in pontoEletronico.user.registros">
 						<td>
 							<h4 class="ui image header">
 								<i class="disabled calendar icon"></i>
 								<div class="content">
-									12 de julho, 2016
-									<div class="sub header">Segunda-feira
+									{{registro.date | date:'dd MMMM, yyyy'}}
+									<div class="sub header">{{registro.date | date:'EEEE'}}
 									</div>
 								</div>
 							</h4>
 						</td>
 						<td>
 							<div class="ui mini horizontal divided list pontos">
-								<div class="item" ng-repeat="p in pontos">
+								<div class="item" ng-repeat="ponto in registro.pontos">
 									<i class="wait icon"></i>
 									<div class="content">
-										<div class="header">{{ p }}</div>
+										<div class="header">{{ ponto }}</div>
 									</div>
 								</div>
 							</div>
