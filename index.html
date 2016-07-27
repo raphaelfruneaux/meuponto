@@ -77,12 +77,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="registro in pontoEletronico.user.registros">
+					<tr ng-repeat="registro in pontoEletronico.user.registros | orderBy: '-date'">
 						<td>
 							<h4 class="ui image header">
 								<i class="disabled calendar icon"></i>
 								<div class="content">
-									{{registro.date | date:'dd MMMM, yyyy'}}
+									{{ registro.date | date:'dd MMMM, yyyy' }}
 									<div class="sub header">{{registro.date | date:'EEEE'}}
 									</div>
 								</div>
