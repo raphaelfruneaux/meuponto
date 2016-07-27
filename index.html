@@ -74,51 +74,54 @@
 				<thead>
 					<tr><th>Dias anteriores</th>
 						<th>Registros</th>
-					</tr></thead>
-					<tbody>
-						<tr>
-							<td>
-								<h4 class="ui image header">
-									<i class="disabled calendar icon"></i>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<h4 class="ui image header">
+								<i class="disabled calendar icon"></i>
+								<div class="content">
+									12 de julho, 2016
+									<div class="sub header">Segunda-feira
+									</div>
+								</div>
+							</h4>
+						</td>
+						<td>
+							<div class="ui mini horizontal divided list pontos">
+								<div class="item" ng-repeat="p in pontos">
+									<i class="wait icon"></i>
 									<div class="content">
-										12 de julho, 2016
-										<div class="sub header">Segunda-feira
-										</div>
+										<div class="header">{{ p }}</div>
 									</div>
-								</h4></td>
-								<td>
-									<div class="ui mini horizontal divided list pontos">
-										<div class="item" ng-repeat="p in pontos">
-											<i class="wait icon"></i>
-											<div class="content">
-												<div class="header">{{ p }}</div>
-											</div>
-										</div>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<!-- <div class="ui inverted segment">
-					<div class="ui inverted relaxed divided list">
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!--
+			<div class="ui inverted segment">
+				<div class="ui inverted relaxed divided list">
 					<div class="item" ng-repeat="p in pontos">
-					<div class="content">
-					<div class="header">{{$index %2==0 ? 'Entrada' : 'Saída'}}</div>
-					{{p}}
+						<div class="content">
+							<div class="header">{{$index %2==0 ? 'Entrada' : 'Saída'}}</div>
+							{{p}}
+						</div>
+					</div>
 				</div>
-			</div>
+			</div> -->
+		<div class="bottom-bar">
+			<button class="ui blue basic button">
+				<i class="icon download"></i>
+				Importar JSON
+			</button>
+			<button class="ui green basic button">
+				<i class="icon upload"></i>
+				Exportar para JSON
+			</button>
 		</div>
-	</div> -->
-	<div class="bottom-bar">
-		<button class="ui blue basic button">
-			<i class="icon download"></i>
-			Importar JSON
-		</button>
-		<button class="ui green basic button">
-			<i class="icon upload"></i>
-			Exportar para JSON
-		</button>
 	</div>
-</div>
 </body>
 </html>
