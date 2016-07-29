@@ -1,8 +1,12 @@
+(function () {
 
-var myApp = angular.module('myApp',['ui.mask']);
+  "use strict";
 
-  myApp.controller('CounterController', ['$scope', '$filter', '$interval', function($scope, $filter, $interval) {
+  angular.module('myApp', ['ui.mask']).controller('CounterController', CounterController);
 
+  CounterController.$inject = ['$scope', '$filter', '$interval'];
+
+  function CounterController ($scope, $filter, $interval) {
 		Date.prototype.today = function () {
 	    return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
 		}
@@ -41,7 +45,7 @@ var myApp = angular.module('myApp',['ui.mask']);
     $scope.dataAtual = date;
 		$scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
-    
+
     $scope.addPonto = function () {
       if ($scope.ponto) {
         $scope.pontos.push(formatPonto(angular.copy($scope.ponto)));
@@ -58,7 +62,7 @@ var myApp = angular.module('myApp',['ui.mask']);
 				pontosAux.push(angular.copy($scope.horarioAtual).match(/\d{2}:\d{2}/).join(':'));
 			}
 
-      for (i in pontosAux) {
+      for (var i in pontosAux) {
         if (i % 2 != 0) {
           diffs.push(hmh.diff(toHMH(pontosAux[i-1]), toHMH(pontosAux[i])).toString().replace(/\s+/g, ''));
         }
@@ -79,5 +83,5 @@ var myApp = angular.module('myApp',['ui.mask']);
       p = p.match(/\d+/g).join('');
       return p.charAt(0) + p.charAt(1) + "h" + p.charAt(2) + p.charAt(3) + "m";
     }
-
-  }]);
+  };
+})();
