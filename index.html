@@ -80,7 +80,7 @@
 				</thead>
 				<tbody>
 					<tr
-						ng-repeat="registro in pontoEletronico.user.registros |orderBy: '-date' track by $index"
+						ng-repeat="registro in pontoEletronico.user.registros |orderBy: '-date' track by registro.date"
 						ng-if="registro.date != (dataAtual | date: 'yyyy-MM-dd')">
 						<td>
 							<h4 class="ui image header">
