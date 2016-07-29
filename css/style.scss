@@ -2,6 +2,7 @@ $default_color: #a5a5a5;
 
 body {
 	color: $default_color;
+	background: rgb(247, 247, 247);
 }
 
 .hidden {
@@ -9,7 +10,21 @@ body {
 	height: 0;
 	padding: 0;
 	margin: 0;
+	width: 0;
 }
+
+.ui.container {
+	text-align: center;
+}
+
+.ui.table {
+	margin: 30px auto;
+}
+
+.pontos {
+	width: 370px;
+}
+
 .ui.container .ui.form .input_ponto {
 	width: 80px;
 	text-align: center;
@@ -29,12 +44,15 @@ body {
 }
 
 .head {
-	.field {
-		display: inline-block;
+	.ui.form .field {
+		display: inline-table;
+		margin-right: 5px;
+		&.day .ui.dropdown {
+			min-width: 65px;
+		}
 	}
 	.date {
 		display: inline-block;
-		font-size: 20px;
 		vertical-align: -webkit-baseline-middle;
 	}
 }
@@ -43,4 +61,9 @@ body {
 	h4.header {
 		width: 170px;
 	}
+}
+
+.ui.horizontal.divider {
+	width: 50%;
+	margin: 0 auto;
 }

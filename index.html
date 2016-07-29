@@ -6,10 +6,14 @@
 	<title>Ponto</title>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.8/angular-locale_pt-br.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script type="text/javascript" src="node_modules/hmh/index.js"></script>
 	<script type="text/javascript" src="node_modules/angular-ui-mask/dist/mask.min.js"></script>
+	<script type="text/javascript" src="js/semantic.min.js"></script>
+	<script type="text/javascript" src="js/dropdown.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<link rel="stylesheet" href="css/semantic.min.css">
+	<link rel="stylesheet" href="css/dropdown.css">
 	<link rel="stylesheet" href="css/icon.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
@@ -18,15 +22,32 @@
 		<h1>Counter</h1>
 		<div class="head">
 			<div class="ui form">
-				<form ng-submit="addPonto()">
+				<form ng-submit="addPonto()">				
+					<div class="field day">
+						<label>Dia</label>
+						<select class="ui dropdown" ng-model="selectedDay">
+						  <option value="" selected>{{ dataAtual | date: 'dd' }}</option>
+						</select>
+					</div>
+					<div class="field month">
+						<label>Mês</label>
+						<select class="ui dropdown" ng-model="selectedMonth">
+						  <option value="" selected>Julho</option>
+						  <option value="0">Janeiro</option>
+						  <option value="1">Fevereiro</option>
+						  <option value="1">Março</option>
+						  <option value="1">Abril</option>
+						  <option value="1">...</option>
+						</select>
+					</div>
 					<div class="field">
 						<label>Ponto</label>
 						<input class="input_ponto" type="text" ng-model="ponto" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
 					</div>
-					<div class="date">
+					<!-- <div class="date">
 						<i class="calendar icon"></i> {{ dataAtual | date: 'dd De MMMM, yyyy' }}
 						<i class="wait icon"></i> {{ horarioAtual }}
-					</div>
+					</div> -->
 					<input type="submit" id="submit" value="Submit" class="hidden"/>
 				</form>
 			</div>
@@ -57,7 +78,7 @@
 								</div>
 							</div>
 						</h4></td>
-						<td>
+						<td class="pontos">
 							<div class="ui mini horizontal divided list pontos">
 								<div class="item" ng-repeat="p in pontos">
 									<i class="wait icon"></i>
@@ -68,42 +89,53 @@
 								<span ng-show="pontos.length == 0">Nenhum ponto foi registrado ainda..</span>
 							</div>
 						</td>
-					</tr>
-				</tbody>
-			</table>
-			<table class="ui very basic collapsing celled table">
-				<thead>
-					<tr>
-						<th>Dias anteriores</th>
-						<th>Registros</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						ng-repeat="registro in pontoEletronico.user.registros |orderBy: '-date' track by registro.date"
-						ng-if="registro.date != (dataAtual | date: 'yyyy-MM-dd')">
-						<td>
-							<h4 class="ui image header">
-								<i class="disabled calendar icon"></i>
-								<div class="content">
-									{{ registro.date | date:'dd MMMM, yyyy' }}
-									<div class="sub header">{{registro.date | date:'EEEE'}}</div>
-								</div>
-							</h4>
-						</td>
-						<td>
-							<div class="ui mini horizontal divided list pontos">
-								<div class="item" ng-repeat="ponto in registro.pontos">
-									<i class="wait icon"></i>
-									<div class="content">
-										<div class="header">{{ ponto }}</div>
-									</div>
-								</div>
+						<td ng-show="pontos.length != 0">
+							<div class="ui tiny label">
+							  Total:
+							  <div class="detail">8h30m</div>
 							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
+			<div class="ui horizontal divider">
+		    Dias anteriores
+		  </div>
+			<div>
+				<table class="ui very basic collapsing celled table">
+					<tbody>
+						<tr
+							ng-repeat="registro in pontoEletronico.user.registros |orderBy: '-date' track by registro.date"
+							ng-if="registro.date != (dataAtual | date: 'yyyy-MM-dd')">
+							<td>
+								<h4 class="ui image header">
+									<i class="disabled calendar icon"></i>
+									<div class="content">
+										{{ registro.date | date:'dd MMMM, yyyy' }}
+										<div class="sub header">{{registro.date | date:'EEEE'}}</div>
+									</div>
+								</h4>
+							</td>
+							<td class="pontos">
+								<div class="ui mini horizontal divided list pontos">
+									<div class="item" ng-repeat="ponto in registro.pontos">
+										<i class="wait icon"></i>
+										<div class="content">
+											<div class="header">{{ ponto }}</div>
+										</div>
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="ui tiny teal label">
+								  Total:
+								  <div class="detail">8h30m</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 			<!--
 			<div class="ui inverted segment">
 				<div class="ui inverted relaxed divided list">
@@ -128,5 +160,10 @@
 			</button>
 		</div> -->
 	</div>
+	<script>
+		$('.ui.dropdown')
+		  .dropdown()
+		;
+	</script>
 </body>
 </html>
