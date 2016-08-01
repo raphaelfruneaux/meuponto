@@ -54,8 +54,8 @@
 		</div>
 		<div class="info">
 			<div class="ui label">
-				Horas trabalhadas:
-				<div class="detail">{{ horasTrabalhadas() }}</div>
+				Saída sugerida:
+				<div class="detail">18h30m</div>
 			</div>
 			<div class="ui label red animate">
 				Banco de horas:
@@ -92,7 +92,7 @@
 						<td ng-show="pontos.length != 0">
 							<div class="ui tiny label">
 							  Total:
-							  <div class="detail">8h30m</div>
+							  <div class="detail">{{ horasTrabalhadas() }}</div>
 							</div>
 						</td>
 					</tr>
