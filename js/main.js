@@ -1,5 +1,4 @@
 (function () {
-
   "use strict";
 
   angular.module('myApp', ['ui.mask']).controller('CounterController', CounterController);
@@ -7,6 +6,8 @@
   CounterController.$inject = ['$scope', '$filter', '$interval'];
 
   function CounterController ($scope, $filter, $interval) {
+    var vm = this;
+
 		Date.prototype.today = function () {
 	    return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
 		}
@@ -46,34 +47,46 @@
 		$scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
 
-    $scope.addPonto = function () {
-      if ($scope.ponto) {
-        $scope.pontos.push(formatPonto(angular.copy($scope.ponto)));
+    vm.addPonto = function () {
+      if ($scope.ponto.horario) {
+        $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
         $scope.ponto = '';
         localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
       }
     };
 
-    $scope.horasTrabalhadas = function () {
-      var diffs = [];
-			var pontosAux = angular.copy($scope.pontos);
+    vm.horasTrabalhadas = function (p) {
+      var pontos = (p) ? p : $scope.pontos;
+      var pontosAux = angular.copy(pontos);
 
 			if (pontosAux.length % 2 != 0) {
 				pontosAux.push(angular.copy($scope.horarioAtual).match(/\d{2}:\d{2}/).join(':'));
 			}
 
-      for (var i in pontosAux) {
-        if (i % 2 != 0) {
-          diffs.push(hmh.diff(toHMH(pontosAux[i-1]), toHMH(pontosAux[i])).toString().replace(/\s+/g, ''));
-        }
-      }
-
-      return hmh.sum(diffs).toString() || 0;
+      return calcularHorasTrabalhadas(pontosAux);
     };
 
-		$interval(function () {
-			$scope.horarioAtual = new Date().timeNow();
-		}, 1000);
+    vm.totalHorasTrabalhadas = function (p) {
+      var pontos = (p) ? p : $scope.pontos;
+      var pontosAux = angular.copy(pontos);
+      return calcularHorasTrabalhadas(pontosAux);
+    };
+
+		$interval(atualizaHorario, 1000);
+
+    function atualizaHorario () {
+      return $scope.horarioAtual = new Date().timeNow();
+    }
+
+    function calcularHorasTrabalhadas (pontos) {
+      var diffs = [];
+      for (var i in pontos) {
+        if (i % 2 != 0) {
+          diffs.push(hmh.diff(toHMH(pontos[i-1]), toHMH(pontos[i])).toString().replace(/\s+/g, ''));
+        }
+      }
+      return hmh.sum(diffs).toString() || 0;
+    }
 
     function formatPonto (p) {
       return p.charAt(0) + p.charAt(1) + ":" + p.charAt(2) + p.charAt(3);

@@ -17,13 +17,16 @@
 	<link rel="stylesheet" href="css/icon.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
-<body ng-controller="CounterController">
+<body ng-controller="CounterController as counter">
 	<div class="ui container">
-		<h1>Counter</h1>
+		<h1>
+			<i class="calendar icon"></i> {{ dataAtual | date: 'dd MMMM, yyyy' }} <br>
+			<i class="wait icon"></i> {{ horarioAtual }}
+		</h1>
 		<div class="head">
 			<div class="ui form">
-				<form ng-submit="addPonto()">				
-					<div class="field day">
+				<form ng-submit="counter.addPonto()">
+					<!-- <div class="field day">
 						<label>Dia</label>
 						<select class="ui dropdown" ng-model="selectedDay">
 						  <option value="" selected>{{ dataAtual | date: 'dd' }}</option>
@@ -31,18 +34,25 @@
 					</div>
 					<div class="field month">
 						<label>Mês</label>
-						<select class="ui dropdown" ng-model="selectedMonth">
+						<select class="ui dropdown" ng-model="ponto.mes">
 						  <option value="" selected>Julho</option>
 						  <option value="0">Janeiro</option>
 						  <option value="1">Fevereiro</option>
-						  <option value="1">Março</option>
-						  <option value="1">Abril</option>
-						  <option value="1">...</option>
+						  <option value="2">Março</option>
+						  <option value="3">Abril</option>
+						  <option value="4">Maio</option>
+						  <option value="5">Junho</option>
+						  <option value="6">Julho</option>
+						  <option value="7">Agosto</option>
+						  <option value="8">Setembro</option>
+						  <option value="9">Outubro</option>
+						  <option value="10">Novembro</option>
+						  <option value="11">Dezembro</option>
 						</select>
-					</div>
+					</div> -->
 					<div class="field">
 						<label>Ponto</label>
-						<input class="input_ponto" type="text" ng-model="ponto" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
+						<input class="input_ponto" type="text" ng-model="ponto.horario" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
 					</div>
 					<!-- <div class="date">
 						<i class="calendar icon"></i> {{ dataAtual | date: 'dd De MMMM, yyyy' }}
@@ -55,7 +65,7 @@
 		<div class="info">
 			<div class="ui label">
 				Horas trabalhadas:
-				<div class="detail">{{ horasTrabalhadas() }}</div>
+				<div class="detail">{{ counter.horasTrabalhadas() }}</div>
 			</div>
 			<div class="ui label red animate">
 				Banco de horas:
@@ -92,14 +102,14 @@
 						<td ng-show="pontos.length != 0">
 							<div class="ui tiny label">
 							  Total:
-							  <div class="detail">8h30m</div>
+							  <div class="detail">{{ counter.horasTrabalhadas() }}</div>
 							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="ui horizontal divider">
-		    Dias anteriores
+			Dias anteriores
 		  </div>
 			<div>
 				<table class="ui very basic collapsing celled table">
@@ -129,7 +139,7 @@
 							<td>
 								<div class="ui tiny teal label">
 								  Total:
-								  <div class="detail">8h30m</div>
+								  <div class="detail">{{ counter.totalHorasTrabalhadas(registro.pontos) }}</div>
 								</div>
 							</td>
 						</tr>
