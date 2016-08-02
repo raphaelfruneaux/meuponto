@@ -46,6 +46,7 @@
     $scope.dataAtual = date;
 		$scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
+    $scope.showInputPonto = false;
 
     vm.addPonto = function () {
       if ($scope.ponto.horario) {
@@ -71,6 +72,14 @@
       var pontosAux = angular.copy(pontos);
       return calcularHorasTrabalhadas(pontosAux);
     };
+
+    vm.showInputPonto = function (arg) {
+      $('.input.input-ponto.' + arg)
+        .transition('fade right')
+        .find('input')
+        .focus()
+      ;
+    }
 
 		$interval(atualizaHorario, 1000);
 

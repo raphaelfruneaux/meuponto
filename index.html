@@ -11,9 +11,11 @@
 	<script type="text/javascript" src="node_modules/angular-ui-mask/dist/mask.min.js"></script>
 	<script type="text/javascript" src="js/semantic.min.js"></script>
 	<script type="text/javascript" src="js/dropdown.js"></script>
+	<script type="text/javascript" src="js/transition.min.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<link rel="stylesheet" href="css/semantic.min.css">
 	<link rel="stylesheet" href="css/dropdown.css">
+	<link rel="stylesheet" href="css/transition.min.css">
 	<link rel="stylesheet" href="css/icon.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
@@ -133,6 +135,10 @@
 										<div class="content">
 											<div class="header">{{ ponto }}</div>
 										</div>
+									</div>
+									<a href="#" ng-click="counter.showInputPonto(registro.date)"><i class="circular add icon link"></i></a>
+									<div class="ui input input-ponto {{registro.date}} transition hidden">
+									  <input type="text" ng-model="horario" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
 									</div>
 								</div>
 							</td>

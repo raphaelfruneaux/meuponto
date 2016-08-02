@@ -25,9 +25,12 @@ body {
 	width: 370px;
 }
 
-.ui.container .ui.form .input_ponto {
+.ui.container .ui.form .input_ponto, .ui.input-ponto input {
 	width: 80px;
 	text-align: center;
+}
+.ui.input-ponto input {
+	width: 50px;
 }
 .ui.horizontal.list>.item {
 	.icon {
