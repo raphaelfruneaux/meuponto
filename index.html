@@ -11,30 +11,38 @@
 	<script type="text/javascript" src="node_modules/angular-ui-mask/dist/mask.min.js"></script>
 	<script type="text/javascript" src="js/semantic.min.js"></script>
 	<script type="text/javascript" src="js/dropdown.js"></script>
+	<script type="text/javascript" src="js/transition.min.js"></script>
+	<script type="text/javascript" src="js/popup.min.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<link rel="stylesheet" href="css/semantic.min.css">
 	<link rel="stylesheet" href="css/dropdown.css">
+	<link rel="stylesheet" href="css/transition.min.css">
+	<link rel="stylesheet" href="css/popup.min.css">
 	<link rel="stylesheet" href="css/icon.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
 <body ng-controller="CounterController as counter">
 	<div class="ui container">
-		<h1>
+		<!-- <h1>
 			<i class="calendar icon"></i> {{ dataAtual | date: 'dd MMMM, yyyy' }} <br>
 			<i class="wait icon"></i> {{ horarioAtual }}
-		</h1>
+		</h1> -->
 		<div class="head">
 			<div class="ui form">
 				<form ng-submit="counter.addPonto()">
-					<!-- <div class="field day">
+					<div class="field">
+						<label>Ponto</label>
+						<input class="input_ponto" type="text" ng-model="ponto.horario" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
+					</div>
+					<div class="field day">
 						<label>Dia</label>
-						<select class="ui dropdown" ng-model="selectedDay">
+						<select class="ui dropdown disabled" ng-model="selectedDay">
 						  <option value="" selected>{{ dataAtual | date: 'dd' }}</option>
 						</select>
 					</div>
 					<div class="field month">
 						<label>Mês</label>
-						<select class="ui dropdown" ng-model="ponto.mes">
+						<select class="ui dropdown disabled" ng-model="ponto.mes">
 						  <option value="" selected>Julho</option>
 						  <option value="0">Janeiro</option>
 						  <option value="1">Fevereiro</option>
@@ -49,10 +57,6 @@
 						  <option value="10">Novembro</option>
 						  <option value="11">Dezembro</option>
 						</select>
-					</div> -->
-					<div class="field">
-						<label>Ponto</label>
-						<input class="input_ponto" type="text" ng-model="ponto.horario" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
 					</div>
 					<!-- <div class="date">
 						<i class="calendar icon"></i> {{ dataAtual | date: 'dd De MMMM, yyyy' }}
@@ -111,7 +115,7 @@
 			<div class="ui horizontal divider">
 			Dias anteriores
 		  </div>
-			<div>
+			<div class="previous-day">
 				<table class="ui very basic collapsing celled table">
 					<tbody>
 						<tr
@@ -134,6 +138,14 @@
 											<div class="header">{{ ponto }}</div>
 										</div>
 									</div>
+									<a href="#" ng-click="counter.showInputPonto(registro.date)"><i class="circular add icon link"></i></a>
+									<form ng-submit="counter.addPonto(registro)">
+										<div class="ui input input-ponto {{registro.date}} transition hidden">
+										  <input type="text" ng-model="horario_anterior[registro.date]" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
+										  {{horario_anterior[registro.date]}}
+										</div>
+										<input type="submit" id="submit2" value="Submit" class="hidden"/>
+									</form>
 								</div>
 							</td>
 							<td>
@@ -141,6 +153,7 @@
 								  Total:
 								  <div class="detail">{{ counter.totalHorasTrabalhadas(registro.pontos) }}</div>
 								</div>
+
 							</td>
 						</tr>
 					</tbody>
@@ -174,6 +187,9 @@
 		$('.ui.dropdown')
 		  .dropdown()
 		;
+		$('.icon.button')
+  .popup()
+;
 	</script>
 </body>
 </html>

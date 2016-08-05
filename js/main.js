@@ -42,12 +42,32 @@
     $scope.dataAtual = date;
     $scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
+    $scope.showInputPonto = false;
+    $scope.horario_anterior = {};
 
-    vm.addPonto = function () {
-      if ($scope.ponto.horario) {
-        $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
-        $scope.ponto = '';
+    vm.addPonto = function (arg) {
+      if (arg) {
+        if (!$scope.horario_anterior[arg.date]) {
+          alert('Insira um valor!');
+          return false;
+        }
+
+        var day = $filter('filter')(pontoEletronico.user.registros, {date: arg.date})[0];
+        day.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
         localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+        $scope.horario_anterior[arg.date] = '';
+        console.log(arg.pontos);
+
+        // buscar pontoEletronico de LocalStorage
+        // filtrar os registros pela data
+        // atualizar o valor do registro encontrado no item 2
+        // persistir em local storage again
+      } else {
+        if ($scope.ponto.horario) {
+          $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
+          $scope.ponto = '';
+          localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+        }
       }
     };
 
@@ -68,7 +88,15 @@
       return calcularHorasTrabalhadas(pontosAux);
     };
 
-    $interval(atualizaHorario, 1000);
+    vm.showInputPonto = function (arg) {
+      $('.input.input-ponto.' + arg)
+        .transition('fade right')
+        .find('input')
+        .focus()
+      ;
+    }
+
+		$interval(atualizaHorario, 1000);
 
     function atualizaHorario () {
       return $scope.horarioAtual = new Date().timeNow();
