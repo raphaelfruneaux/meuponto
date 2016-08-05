@@ -138,7 +138,7 @@
 											<div class="header">{{ ponto }}</div>
 										</div>
 									</div>
-									<a href="#" ng-click="counter.showInputPonto(registro.date)"><i class="circular add icon link"></i></a>
+									<a ng-click="counter.showInputPonto(registro.date)"><i class="circular add icon link"></i></a>
 									<form ng-submit="counter.addPonto(registro)">
 										<div class="ui input input-ponto {{registro.date}} transition hidden">
 										  <input type="text" ng-model="horario_anterior[registro.date]" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
