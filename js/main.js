@@ -47,12 +47,23 @@
 		$scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
     $scope.showInputPonto = false;
+    $scope.horario_anterior = {};
 
-    vm.addPonto = function () {
-      if ($scope.ponto.horario) {
-        $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
-        $scope.ponto = '';
-        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+    vm.addPonto = function (arg) {
+      if (arg) {
+        arg.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
+        $scope.horario_anterior[arg.date] = '';
+        console.log(arg.pontos);
+        // buscar pontoEletronico de LocalStorage
+        // filtrar os registros pela data
+        // atualizar o valor do registro encontrado no item 2
+        // persistir em local storage again
+      } else {
+        if ($scope.ponto.horario) {
+          $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
+          $scope.ponto = '';
+          localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+        }
       }
     };
 
