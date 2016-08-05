@@ -1,33 +1,29 @@
 (function () {
   "use strict";
 
-  angular.module('myApp', ['ui.mask']).controller('CounterController', CounterController);
-
-  CounterController.$inject = ['$scope', '$filter', '$interval'];
-
   function CounterController ($scope, $filter, $interval) {
     var vm = this;
 
-		Date.prototype.today = function () {
-	    return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
-		}
+    Date.prototype.today = function () {
+      return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
+    }
 
-		Date.prototype.timeNow = function () {
-	    return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
-		}
+    Date.prototype.timeNow = function () {
+      return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+    }
 
     var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
     if (!dataStorage) {
-        var pontoEletronico = {user: {}};
-        pontoEletronico.user.name = prompt("Informe o seu nome:");
-        pontoEletronico.user.email = prompt("Informe o seu email:");
-        pontoEletronico.user.registros = [];
-        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      var pontoEletronico = {user: {}};
+      pontoEletronico.user.name = prompt("Informe o seu nome:");
+      pontoEletronico.user.email = prompt("Informe o seu email:");
+      pontoEletronico.user.registros = [];
+      localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
     } else {
       var pontoEletronico = dataStorage;
     }
 
-		var date = new Date();
+    var date = new Date();
     var today = date.toISOString().match(/\d{4}-\d{2}-\d{2}/).join('-');
     var current = $filter('filter')(pontoEletronico.user.registros, {date: today})[0];
 
@@ -44,16 +40,24 @@
     $scope.ponto = '';
     $scope.pontos = current.pontos;
     $scope.dataAtual = date;
-		$scope.horarioAtual = date.timeNow();
+    $scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
     $scope.showInputPonto = false;
     $scope.horario_anterior = {};
 
     vm.addPonto = function (arg) {
       if (arg) {
-        arg.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
+        if (!$scope.horario_anterior[arg.date]) {
+          alert('Insira um valor!');
+          return false;
+        }
+
+        var day = $filter('filter')(pontoEletronico.user.registros, {date: arg.date})[0];
+        day.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
+        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
         $scope.horario_anterior[arg.date] = '';
         console.log(arg.pontos);
+
         // buscar pontoEletronico de LocalStorage
         // filtrar os registros pela data
         // atualizar o valor do registro encontrado no item 2
@@ -71,9 +75,9 @@
       var pontos = (p) ? p : $scope.pontos;
       var pontosAux = angular.copy(pontos);
 
-			if (pontosAux.length % 2 != 0) {
-				pontosAux.push(angular.copy($scope.horarioAtual).match(/\d{2}:\d{2}/).join(':'));
-			}
+      if (pontosAux.length % 2 != 0) {
+        pontosAux.push(angular.copy($scope.horarioAtual).match(/\d{2}:\d{2}/).join(':'));
+      }
 
       return calcularHorasTrabalhadas(pontosAux);
     };
@@ -117,4 +121,9 @@
       return p.charAt(0) + p.charAt(1) + "h" + p.charAt(2) + p.charAt(3) + "m";
     }
   };
+
+  CounterController.$inject = ['$scope', '$filter', '$interval'];
+
+  angular.module('myApp', ['ui.mask']).controller('CounterController', CounterController);
+
 })();
