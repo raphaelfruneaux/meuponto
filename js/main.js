@@ -56,12 +56,6 @@
         day.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
         localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
         $scope.horario_anterior[arg.date] = '';
-        console.log(arg.pontos);
-
-        // buscar pontoEletronico de LocalStorage
-        // filtrar os registros pela data
-        // atualizar o valor do registro encontrado no item 2
-        // persistir em local storage again
       } else {
         if ($scope.ponto.horario) {
           $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
@@ -69,6 +63,15 @@
           localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
         }
       }
+    };
+
+    vm.saidaSugerida = function () {
+      var horarioAtual = toHMH($scope.horarioAtual);
+      var horasTrabalhadas = vm.horasTrabalhadas();
+      var jornada = (date.getDay() == 5) ? "8h" : "9h";
+      var horarioDiff = hmh.sub(jornada + " " + horasTrabalhadas);
+      console.log(horarioDiff);
+      return hmh.sum(horarioAtual + " " + horarioDiff).toString() || 0;
     };
 
     vm.horasTrabalhadas = function (p) {
