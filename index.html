@@ -69,7 +69,7 @@
 		<div class="info">
 			<div class="ui label">
 				Saída sugerida:
-				<div class="detail">18h30m</div>
+				<div class="detail">{{ counter.saidaSugerida() }}</div>
 			</div>
 			<div class="ui label red animate">
 				Banco de horas:
@@ -142,7 +142,6 @@
 									<form ng-submit="counter.addPonto(registro)">
 										<div class="ui input input-ponto {{registro.date}} transition hidden">
 										  <input type="text" ng-model="horario_anterior[registro.date]" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
-										  {{horario_anterior[registro.date]}}
 										</div>
 										<input type="submit" id="submit2" value="Submit" class="hidden"/>
 									</form>
