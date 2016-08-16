@@ -25,6 +25,11 @@ body {
 	width: 370px;
 }
 
+.ui.table .ui.tiny.label {
+  width: 100px;
+  text-align: center;
+}
+
 .ui.container .ui.form .input_ponto, .ui.input-ponto input {
 	width: 80px;
 	text-align: center;

@@ -56,6 +56,7 @@
         day.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
         localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
         $scope.horario_anterior[arg.date] = '';
+        vm.showInputPonto(arg.date);
       } else {
         if ($scope.ponto.horario) {
           $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
