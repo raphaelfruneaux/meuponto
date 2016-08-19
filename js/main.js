@@ -92,11 +92,12 @@
     };
 
     vm.totalHoraExtra = function (r) {
-      var horasTrabalhadas = vm.horasTrabalhadas(r.pontos);
-      var d = new Date(r.date.split('-')[0], r.date.split('-')[1] - 1, r.date.split('-')[2]);
+      var registro = (r) ? r : current;
+      var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
+      var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
       var jornada = (d.getDay() == 5) ? "8h" : "9h";
       var extra = hmh.diff(jornada, horasTrabalhadas);
-      r.extra = extra;
+      registro.extra = formatPonto(extra.toString());
       return extra.toString() || 0;
     };
 

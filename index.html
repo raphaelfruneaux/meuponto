@@ -108,6 +108,13 @@
 							  Total:
 							  <div class="detail">{{ counter.horasTrabalhadas() }}</div>
 							</div>
+              <div class="ui tiny label extra"
+                ng-class="{
+                  'green': counter.verificaHoraExtra(registro) > 0,
+                  'red': counter.verificaHoraExtra(registro) < 0
+                }">
+                <div class="detail">{{ counter.totalHoraExtra() }}</div>
+              </div>
 						</td>
 					</tr>
 				</tbody>
