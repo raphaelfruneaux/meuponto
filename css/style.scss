@@ -29,6 +29,13 @@ body {
   width: 100px;
   text-align: center;
 }
+.ui.table .ui.tiny.extra {
+  width: auto;
+
+  &>.detail {
+    margin-left: 0;
+  }
+}
 
 .ui.container .ui.form .input_ponto, .ui.input-ponto input {
 	width: 80px;

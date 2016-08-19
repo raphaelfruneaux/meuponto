@@ -71,7 +71,6 @@
       var horasTrabalhadas = vm.horasTrabalhadas();
       var jornada = (date.getDay() == 5) ? "8h" : "9h";
       var horarioDiff = hmh.sub(jornada + " " + horasTrabalhadas);
-      console.log(horarioDiff);
       return hmh.sum(horarioAtual + " " + horarioDiff).toString() || 0;
     };
 
@@ -91,6 +90,27 @@
       var pontosAux = angular.copy(pontos);
       return calcularHorasTrabalhadas(pontosAux);
     };
+
+    vm.totalHoraExtra = function (r) {
+      var horasTrabalhadas = vm.horasTrabalhadas(r.pontos);
+      var d = new Date(r.date.split('-')[0], r.date.split('-')[1] - 1, r.date.split('-')[2]);
+      var jornada = (d.getDay() == 5) ? "8h" : "9h";
+      var extra = hmh.diff(jornada, horasTrabalhadas);
+      r.extra = extra;
+      return extra.toString() || 0;
+    };
+
+    vm.verificaHoraExtra = function (r) {
+      var horasExtra = vm.totalHoraExtra(r);
+      var regex = /\-/;
+      if (regex.test(horasExtra)) {
+        return -1;
+      } else if (horasExtra == 0) {
+        return 0;
+      } else {
+        return 1;
+      }
+    }
 
     vm.showInputPonto = function (arg) {
       $('.input.input-ponto.' + arg)
