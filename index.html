@@ -71,10 +71,22 @@
 				Saída sugerida:
 				<div class="detail">{{ counter.saidaSugerida() }}</div>
 			</div>
-			<div class="ui label red animate">
+			<div class="ui label animate"
+        ng-class="{
+          'green': counter.verificaBancoDeHoras() > 0,
+          'red': counter.verificaBancoDeHoras() < 0
+        }">
 				Banco de horas:
-				<div class="detail">-2h</div>
+				<div class="detail">{{ counter.bancoDeHorasMes() }}</div>
 			</div>
+			<!-- <div class="ui label animate"
+        ng-class="{
+          'green': counter.verificaBancoDeHoras() > 0,
+          'red': counter.verificaBancoDeHoras() < 0
+        }">
+				Banco de horas (Mês anterior):
+				<div class="detail">{{ counter.bancoDeHorasMes() }}</div>
+			</div> -->
 			<div class="ui label">
 				Pontos registrados:
 				<div class="detail">{{ pontos.length == 0 ? 'nenhum' : pontos.length }}</div>
