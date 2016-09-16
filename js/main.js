@@ -174,9 +174,9 @@
       var credito = hmh.sum(registrosCredito, 'minutes').toString();
       var debito = hmh.sum(registroDebito, 'minutes').toString();
 
-      vm.periodo = {}
-      vm.periodo.min = dataMin
-      vm.periodo.max = dataMax
+      vm.periodo = {};
+      vm.periodo.min = dataMin;
+      vm.periodo.max = dataMax;
 
       return hmh.sub(credito + " " + debito);
     };
