@@ -155,7 +155,7 @@
       var credito = hmh.sum(registrosCredito).toString();
       var debito = hmh.sum(registroDebito).toString();
 
-      return hmh.sub(credito + " " + debito).toString() || 0;
+      return hmh.sub(credito + " " + debito);
     };
 
     vm.verificaBancoDeHoras = function () {

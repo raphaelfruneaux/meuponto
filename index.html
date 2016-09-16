@@ -73,11 +73,11 @@
 			</div>
 			<div class="ui label animate"
         ng-class="{
-          'green': counter.verificaBancoDeHoras() > 0,
-          'red': counter.verificaBancoDeHoras() < 0
+          'green': !counter.bancoDeHorasMes().isNegative,
+          'red': counter.bancoDeHorasMes().isNegative
         }">
 				Banco de horas:
-				<div class="detail">{{ counter.bancoDeHorasMes() }}</div>
+				<div class="detail">{{ counter.bancoDeHorasMes().toString() }}</div>
 			</div>
 			<!-- <div class="ui label animate"
         ng-class="{
