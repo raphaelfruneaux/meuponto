@@ -123,7 +123,26 @@
     };
 
     vm.bancoDeHorasTotal = function () {
-      return 0;
+      var registrosCredito = [];
+      var registroDebito = [];
+
+      var dataBase = today.split('-');
+      var mesAtual = parseInt(dataBase[1]);
+
+      angular.forEach(pontoEletronico.user.registros, function (item) {
+        if (item.date != today) {
+          if (/\-/.test(item.extra)) {
+            registroDebito.push(item.extra);
+          } else {
+            registrosCredito.push(item.extra);
+          }
+        }
+      });
+
+      var credito = hmh.sum(registrosCredito, 'minutes').toString();
+      var debito = hmh.sum(registroDebito, 'minutes').toString();
+
+      return hmh.sub(credito + " " + debito);
     };
 
     vm.bancoDeHorasMes = function () {
@@ -143,7 +162,7 @@
       var dataMax = dataBase[0] + '-' + dataBase[1] + '-20';
 
       angular.forEach(pontoEletronico.user.registros, function (item) {
-        if (item.date >= dataMin && item.date <= dataMax) {
+        if (item.date != today && item.date >= dataMin && item.date <= dataMax) {
           if (/\-/.test(item.extra)) {
             registroDebito.push(item.extra);
           } else {
@@ -152,10 +171,14 @@
         }
       });
 
-      var credito = hmh.sum(registrosCredito).toString();
-      var debito = hmh.sum(registroDebito).toString();
+      var credito = hmh.sum(registrosCredito, 'minutes').toString();
+      var debito = hmh.sum(registroDebito, 'minutes').toString();
 
-      return hmh.sub(credito + " " + debito).toString() || 0;
+      vm.periodo = {};
+      vm.periodo.min = dataMin;
+      vm.periodo.max = dataMax;
+
+      return hmh.sub(credito + " " + debito);
     };
 
     vm.verificaBancoDeHoras = function () {
@@ -164,13 +187,13 @@
 
     vm.showInputPonto = function (arg) {
       $('.input.input-ponto.' + arg)
-        .transition('fade right')
-        .find('input')
-        .focus()
+      .transition('fade right')
+      .find('input')
+      .focus()
       ;
     }
 
-		$interval(atualizaHorario, 1000);
+    $interval(atualizaHorario, 1000);
 
     function atualizaHorario () {
       return $scope.horarioAtual = new Date().timeNow();
