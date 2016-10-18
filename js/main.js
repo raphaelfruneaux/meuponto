@@ -69,6 +69,10 @@
     vm.saidaSugerida = function () {
       var horarioAtual = toHMH($scope.horarioAtual);
       var horasTrabalhadas = vm.horasTrabalhadas();
+
+      if (horasTrabalhadas === undefined || horasTrabalhadas == 0)
+        return 0
+
       var jornada = "0h";
 
       if (date.getDay() != 0 && date.getDay() != 6) {
@@ -101,7 +105,9 @@
     };
 
     vm.totalHoraExtra = function (r) {
-      var registro = (r) ? r : current;
+      var registro = r || current;
+      if (registro === undefined || registro.length == 0)
+        return 0
       var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
       var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
       var jornada = (d.getDay() == 5) ? "8h" : "9h";
@@ -111,6 +117,8 @@
     };
 
     vm.verificaHoraExtra = function (r) {
+      if (r === undefined || r.length == 0)
+        return 0
       var horasExtra = vm.totalHoraExtra(r);
       var regex = /\-/;
       if (regex.test(horasExtra)) {
@@ -139,8 +147,8 @@
         }
       });
 
-      var credito = hmh.sum(registrosCredito, 'minutes').toString();
-      var debito = hmh.sum(registroDebito, 'minutes').toString();
+      var credito = hmh.sum(registrosCredito, 'minutes').toString() || 0;
+      var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
 
       return hmh.sub(credito + " " + debito);
     };
@@ -171,8 +179,8 @@
         }
       });
 
-      var credito = hmh.sum(registrosCredito, 'minutes').toString();
-      var debito = hmh.sum(registroDebito, 'minutes').toString();
+      var credito = hmh.sum(registrosCredito, 'minutes').toString() || 0;
+      var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
 
       vm.periodo = {};
       vm.periodo.min = dataMin;
