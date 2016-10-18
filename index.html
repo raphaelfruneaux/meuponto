@@ -4,6 +4,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Ponto</title>
+	<script>
+			var module = window.module || {}
+	</script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.8/angular-locale_pt-br.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -77,7 +80,7 @@
           'red': counter.bancoDeHorasTotal().isNegative
         }">
 				Banco de horas:
-				<div class="detail">{{ counter.bancoDeHorasTotal().toString() }}</div>
+				<div class="detail">{{ counter.bancoDeHorasTotal().toString() || 0 }}</div>
 			</div>
 			<div class="ui label animate"
         ng-class="{
@@ -85,7 +88,7 @@
           'red': counter.bancoDeHorasMes().isNegative
         }">
 				Banco de horas (ref: {{ counter.periodo.min | date:'dd MMM' }} a {{ counter.periodo.max | date:'dd MMM' }} ):
-				<div class="detail">{{ counter.bancoDeHorasMes().toString() }}</div>
+				<div class="detail">{{ counter.bancoDeHorasMes().toString() || 0 }}</div>
 			</div>
 			<div class="ui label">
 				Pontos registrados:
