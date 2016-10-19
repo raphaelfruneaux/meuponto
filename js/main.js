@@ -106,7 +106,7 @@
 
     vm.totalHoraExtra = function (r) {
       var registro = r || current;
-      if (registro === undefined || registro.length == 0)
+      if (registro === undefined || registro.pontos.length == 0)
         return 0
       var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
       var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
@@ -118,7 +118,7 @@
 
     vm.verificaHoraExtra = function (r) {
       if (r === undefined || r.length == 0)
-        return 0
+        return -1
       var horasExtra = vm.totalHoraExtra(r);
       var regex = /\-/;
       if (regex.test(horasExtra)) {
