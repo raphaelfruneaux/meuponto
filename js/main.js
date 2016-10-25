@@ -76,7 +76,7 @@
       var jornada = "0h";
 
       if (date.getDay() != 0 && date.getDay() != 6) {
-        jornada = (date.getDay() == 5) ? "8h" : "9h"
+        jornada = (date.getDay() == 5) ? "8h" : (d.getDay() == 6) ? "0h" : "9h"
       }
 
       if ($scope.pontos.length == 1) {
@@ -110,7 +110,7 @@
         return 0
       var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
       var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
-      var jornada = (d.getDay() == 5) ? "8h" : "9h";
+      var jornada = (d.getDay() == 5) ? "8h" : (d.getDay() == 6) ? "0h" : "9h";
       var extra = hmh.diff(jornada, horasTrabalhadas);
       registro.extra = extra.toString();
       return extra.toString() || 0;
