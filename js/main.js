@@ -76,7 +76,7 @@
       var jornada = "0h";
 
       if (date.getDay() != 0 && date.getDay() != 6) {
-        jornada = (date.getDay() == 5) ? "8h" : (d.getDay() == 6) ? "0h" : "9h"
+        jornada = (date.getDay() == 5) ? "8h" : "9h"
       }
 
       if ($scope.pontos.length == 1) {
