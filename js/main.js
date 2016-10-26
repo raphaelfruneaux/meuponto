@@ -117,8 +117,9 @@
     };
 
     vm.verificaHoraExtra = function (r) {
-      if (r === undefined || r.length == 0)
-        return -1
+      var r = r || current;
+      if (r === undefined || r.pontos.length == 0)
+        return 0
       var horasExtra = vm.totalHoraExtra(r);
       var regex = /\-/;
       if (regex.test(horasExtra)) {
@@ -158,16 +159,16 @@
       var registroDebito = [];
 
       var dataBase = today.split('-');
-      var mesAtual = parseInt(dataBase[1]);
+      var mesRef = dataBase[2] >= 21 ? parseInt(dataBase[1]) + 1 : parseInt(dataBase[1]);
 
-      var mesMin = (mesAtual == 1) ? 12 : (parseInt(dataBase[1]) - 1);
+      var mesMin = (mesRef == 1) ? 12 : (mesRef - 1);
       mesMin = (mesMin < 10) ? "0" + mesMin : mesMin;
 
-      var mesMax = (mesAtual < 12) ? (parseInt(dataBase[1]) + 1) : 1;
+      var mesMax = (mesRef < 12) ? (mesRef + 1) : 1;
       mesMax = (mesMax < 10) ? "0" + mesMax : mesMax;
 
       var dataMin = dataBase[0] + '-' + mesMin + '-21';
-      var dataMax = dataBase[0] + '-' + dataBase[1] + '-20';
+      var dataMax = dataBase[0] + '-' + mesRef + '-20';
 
       angular.forEach(pontoEletronico.user.registros, function (item) {
         if (item.date != today && item.date >= dataMin && item.date <= dataMax) {
