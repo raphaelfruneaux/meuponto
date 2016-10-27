@@ -125,8 +125,8 @@
 							</div>
               <div class="ui tiny label extra"
                 ng-class="{
-                  'green': counter.verificaHoraExtra(registro) > 0,
-                  'red': counter.verificaHoraExtra(registro) < 0
+                  'green': counter.verificaHoraExtra() > 0,
+                  'red': counter.verificaHoraExtra() < 0
                 }">
                 <div class="detail">{{ counter.totalHoraExtra() }}</div>
               </div>
