@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
+
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,6 +25,7 @@
 	<link rel="stylesheet" href="css/icon.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body ng-controller="CounterController as counter">
 	<div class="ui container">
 		<h1>
@@ -35,7 +37,8 @@
 				<form ng-submit="counter.addPonto()">
 					<div class="field">
 						<label>Ponto</label>
-						<input class="input_ponto" type="text" ng-model="ponto.horario" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
+						<input class="input_ponto" type="text" ng-model="ponto.horario" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_"
+							autofocus>
 					</div>
 					<div class="field day">
 						<label>Dia</label>
@@ -65,7 +68,7 @@
 						<i class="calendar icon"></i> {{ dataAtual | date: 'dd De MMMM, yyyy' }}
 						<i class="wait icon"></i> {{ horarioAtual }}
 					</div> -->
-					<input type="submit" id="submit" value="Submit" class="hidden"/>
+					<input type="submit" id="submit" value="Submit" class="hidden" />
 				</form>
 			</div>
 		</div>
@@ -74,16 +77,14 @@
 				Saída sugerida:
 				<div class="detail">{{ counter.saidaSugerida() }}</div>
 			</div>
-			<div class="ui label animate"
-        ng-class="{
+			<div class="ui label animate" ng-class="{
           'green': !counter.bancoDeHorasTotal().isNegative,
           'red': counter.bancoDeHorasTotal().isNegative
         }">
 				Banco de horas:
 				<div class="detail">{{ counter.bancoDeHorasTotal().toString() || 0 }}</div>
 			</div>
-			<div class="ui label animate"
-        ng-class="{
+			<div class="ui label animate" ng-class="{
 					'green': !counter.bancoDeHorasMes().isNegative,
           'red': counter.bancoDeHorasMes().isNegative
         }">
@@ -103,90 +104,114 @@
 							<i class="disabled calendar icon"></i>
 							<div class="content">
 								Hoje
-								<div class="sub header"> {{ dataAtual | date : 'EEEE' }}
-								</div>
-							</div>
-						</h4></td>
-						<td class="pontos">
-							<div class="ui mini horizontal divided list pontos">
-								<div class="item" ng-repeat="p in pontos">
-									<i class="wait icon"></i>
-									<div class="content">
-										<div class="header">{{ p }}</div>
+								<div class="sub header"> {{ dataAtual | date : 'EEEE' }}</div>
+								<div class="ui dropdown dropdown-settings">
+									<div class="text"><i class="small setting icon"></i></div>
+									<div class="menu">
+										<div class="item">
+											<b ng-if="current.feriado">Feriado</b>
+											<b ng-if="!current.feriado">Dia útil</b>
+										</div>
+										<div class="divider"></div>
+										<div class="item" ng-click="counter.marcarComoFeriado()" ng-if="!current.feriado">Mudar para Feriado</div>
+										<div class="item" ng-click="counter.desmarcarComoFeriado()" ng-if="current.feriado">Mudar para Dia útil</div>
 									</div>
 								</div>
-								<span ng-show="pontos.length == 0">Nenhum ponto foi registrado ainda..</span>
 							</div>
-						</td>
-						<td ng-show="pontos.length != 0">
-							<div class="ui tiny label">
-							  Total:
-							  <div class="detail">{{ counter.horasTrabalhadas() }}</div>
-							</div>
-              <div class="ui tiny label extra"
-                ng-class="{
+	</div>
+	</h4>
+	</td>
+	<td class="pontos">
+		<div class="ui mini horizontal divided list pontos">
+			<div class="item" ng-repeat="p in pontos">
+				<i class="wait icon"></i>
+				<div class="content">
+					<div class="header">{{ p }}</div>
+				</div>
+			</div>
+			<span ng-show="pontos.length == 0">Nenhum ponto foi registrado ainda..</span>
+		</div>
+	</td>
+	<td ng-show="pontos.length != 0">
+		<div class="ui tiny label">
+			Total:
+			<div class="detail">{{ counter.horasTrabalhadas() }}</div>
+		</div>
+		<div class="ui tiny label extra" ng-class="{
                   'green': counter.verificaHoraExtra() > 0,
                   'red': counter.verificaHoraExtra() < 0
                 }">
-                <div class="detail">{{ counter.totalHoraExtra() }}</div>
-              </div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="ui horizontal divider">
-			Dias anteriores
-		  </div>
-			<div class="previous-day">
-				<table class="ui very basic collapsing celled table">
-					<tbody>
-						<tr
-							ng-repeat="registro in pontoEletronico.user.registros |orderBy: '-date' track by registro.date"
-							ng-if="registro.date != (dataAtual | date: 'yyyy-MM-dd')">
-							<td>
-								<h4 class="ui image header">
-									<i class="disabled calendar icon"></i>
-									<div class="content">
-										{{ registro.date | date:'dd MMMM, yyyy' }}
-										<div class="sub header">{{registro.date | date:'EEEE'}}</div>
-									</div>
-								</h4>
-							</td>
-							<td class="pontos">
-								<div class="ui mini horizontal divided list pontos">
-									<div class="item" ng-repeat="ponto in registro.pontos">
-										<i class="wait icon"></i>
-										<div class="content">
-											<div class="header">{{ ponto }}</div>
+			<div class="detail">{{ counter.totalHoraExtra() }}</div>
+		</div>
+	</td>
+	</tr>
+	</tbody>
+	</table>
+	<div class="ui horizontal divider">
+		Dias anteriores
+	</div>
+	<div class="previous-day">
+		<table class="ui very basic collapsing celled table">
+			<tbody>
+				<tr ng-repeat="registro in pontoEletronico.user.registros |orderBy: '-date' track by registro.date" ng-if="registro.date != (dataAtual | date: 'yyyy-MM-dd')">
+					<td>
+						<h4 class="ui image header">
+							<i class="disabled calendar icon"></i>
+							<div class="content">
+								{{ registro.date | date:'dd MMMM, yyyy' }}
+								<div class="sub header">{{registro.date | date:'EEEE'}}</div>
+								<div class="ui dropdown dropdown-settings">
+									<div class="text"><i class="small setting icon"></i></div>
+									<div class="menu">
+										<div class="item">
+											<b ng-if="registro.feriado">Feriado</b>
+											<b ng-if="!registro.feriado">Dia útil</b>
 										</div>
+										<div class="divider"></div>
+										<div class="item" 
+											ng-click="counter.marcarComoFeriado(registro)" ng-if="!registro.feriado">Mudar para Feriado</div>
+										<div class="item" 
+											ng-click="counter.desmarcarComoFeriado(registro)" ng-if="registro.feriado">Mudar para Dia útil</div>
 									</div>
-									<a ng-click="counter.showInputPonto(registro.date)"><i class="circular add icon link"></i></a>
-									<form ng-submit="counter.addPonto(registro)">
-										<div class="ui input input-ponto {{registro.date}} transition hidden">
-										  <input type="text" ng-model="horario_anterior[registro.date]" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_" autofocus>
-										</div>
-										<input type="submit" id="submit2" value="Submit" class="hidden"/>
-									</form>
 								</div>
-							</td>
-							<td>
-								<div class="ui tiny teal label">
-								  Total:
-								  <div class="detail">{{ counter.totalHorasTrabalhadas(registro.pontos) }}</div>
+							</div>
+						</h4>
+					</td>
+					<td class="pontos">
+						<div class="ui mini horizontal divided list pontos">
+							<div class="item" ng-repeat="ponto in registro.pontos">
+								<i class="wait icon"></i>
+								<div class="content">
+									<div class="header">{{ ponto }}</div>
 								</div>
-                <div class="ui tiny label extra"
-                  ng-class="{
+							</div>
+							<a ng-click="counter.showInputPonto(registro.date)"><i class="circular add icon link"></i></a>
+							<form ng-submit="counter.addPonto(registro)">
+								<div class="ui input input-ponto {{registro.date}} transition hidden">
+									<input type="text" ng-model="horario_anterior[registro.date]" ui-mask="99:99" ui-mask-placeholder ui-mask-placeholder-char="_"
+										autofocus>
+								</div>
+								<input type="submit" id="submit2" value="Submit" class="hidden" />
+							</form>
+						</div>
+					</td>
+					<td>
+						<div class="ui tiny teal label">
+							Total:
+							<div class="detail">{{ counter.totalHorasTrabalhadas(registro.pontos) }}</div>
+						</div>
+						<div class="ui tiny label extra" ng-class="{
                     'green': counter.verificaHoraExtra(registro) > 0,
                     'red': counter.verificaHoraExtra(registro) < 0
                   }">
-								  <div class="detail">{{ counter.totalHoraExtra(registro) }}</div>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<!--
+							<div class="detail">{{ counter.totalHoraExtra(registro) }}</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!--
 			<div class="ui inverted segment">
 				<div class="ui inverted relaxed divided list">
 					<div class="item" ng-repeat="p in pontos">
@@ -198,7 +223,7 @@
 				</div>
 			</div>
 			-->
-			<!--
+	<!--
 			<div class="bottom-bar">
 			<button class="ui blue basic button">
 				<i class="icon download"></i>
@@ -211,8 +236,14 @@
 		</div> -->
 	</div>
 	<script>
-		$('.ui.dropdown').dropdown();
-		$('.icon.button').popup();
+		$(document).ready(function () {
+			$('.ui.dropdown').dropdown();
+			$('.ui.dropdown-settings').dropdown({
+				action: 'hide'
+			});
+			$('.icon.button').popup();
+		});
 	</script>
 </body>
+
 </html>

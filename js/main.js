@@ -1,20 +1,20 @@
 (function () {
   "use strict";
 
-  function CounterController ($scope, $filter, $interval) {
+  function CounterController($scope, $filter, $interval) {
     var vm = this;
 
     Date.prototype.today = function () {
-      return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
+      return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
     }
 
     Date.prototype.timeNow = function () {
-      return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+      return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
     }
 
     var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
     if (!dataStorage) {
-      var pontoEletronico = {user: {}};
+      var pontoEletronico = { user: {} };
       pontoEletronico.user.name = prompt("Informe o seu nome:");
       pontoEletronico.user.email = prompt("Informe o seu email:");
       pontoEletronico.user.registros = [];
@@ -25,12 +25,13 @@
 
     var date = new Date();
     var today = date.toISOString().match(/\d{4}-\d{2}-\d{2}/).join('-');
-    var current = $filter('filter')(pontoEletronico.user.registros, {date: today})[0];
+    var current = $filter('filter')(pontoEletronico.user.registros, { date: today })[0];
 
     if (!current || current.length < 1) {
       var registro = {
         date: today,
-        pontos: []
+        pontos: [],
+        feriado: false
       };
       current = registro;
       pontoEletronico.user.registros.push(registro);
@@ -39,6 +40,7 @@
 
     $scope.ponto = '';
     $scope.pontos = current.pontos;
+    $scope.current = current;
     $scope.dataAtual = date;
     $scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
@@ -52,7 +54,7 @@
           return false;
         }
 
-        var day = $filter('filter')(pontoEletronico.user.registros, {date: arg.date})[0];
+        var day = $filter('filter')(pontoEletronico.user.registros, { date: arg.date })[0];
         day.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
         localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
         $scope.horario_anterior[arg.date] = '';
@@ -69,22 +71,33 @@
     vm.saidaSugerida = function () {
       var horarioAtual = toHMH($scope.horarioAtual);
       var horasTrabalhadas = vm.horasTrabalhadas();
+      
 
       if (horasTrabalhadas === undefined || horasTrabalhadas == 0)
         return 0
 
       var jornada = "0h";
 
-      if (date.getDay() != 0 && date.getDay() != 6) {
-        jornada = (date.getDay() == 5) ? "8h" : "9h"
+      if (current.hasOwnProperty('feriado') && current.feriado == false) {
+        if (date.getDay() != 0 && date.getDay() != 6) {
+          jornada = (date.getDay() == 5) ? "8h" : "9h"
+        }
+
+        if ($scope.pontos.length == 1) {
+          jornada = hmh.sum(jornada + " 1h").toString();
+        }
+        
+
+        var horarioDiff = hmh.sub(jornada + " " + horasTrabalhadas);
+
+        if (!horarioDiff.isNegative) {
+          return horarioAtual
+        }
+
+        return hmh.sum(horarioAtual + " " + horarioDiff).toString() || 0;
       }
 
-      if ($scope.pontos.length == 1) {
-        jornada = hmh.sum(jornada + " 1h").toString();
-      }
-
-      var horarioDiff = hmh.sub(jornada + " " + horasTrabalhadas);
-      return hmh.sum(horarioAtual + " " + horarioDiff).toString() || 0;
+      return horarioAtual;
     };
 
     vm.horasTrabalhadas = function (p) {
@@ -110,7 +123,7 @@
         return 0
       var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
       var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
-      var jornada = (d.getDay() == 5) ? "8h" : (d.getDay() == 6) ? "0h" : "9h";
+      var jornada = (d.getDay() == 5) ? "8h" : (d.getDay() == 6 || registro.feriado) ? "0h" : "9h";
       var extra = hmh.diff(jornada, horasTrabalhadas);
       registro.extra = extra.toString();
       return extra.toString() || 0;
@@ -196,33 +209,59 @@
 
     vm.showInputPonto = function (arg) {
       $('.input.input-ponto.' + arg)
-      .transition('fade right')
-      .find('input')
-      .focus()
-      ;
-    }
+        .transition('fade right')
+        .find('input')
+        .focus()
+        ;
+    };
+
+    vm.showInputPonto = function (arg) {
+      $('.input.input-ponto.' + arg)
+        .transition('fade right')
+        .find('input')
+        .focus()
+        ;
+    };
+
+    vm.marcarComoFeriado = function (r) {
+      registro = r || current
+      if (typeof registro === 'object') {
+        registro.feriado = true;
+        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      }
+      console.log(registro);
+    };
+
+    vm.desmarcarComoFeriado = function (r) {
+      registro = r || current
+      if (typeof registro === 'object') {
+        registro.feriado = false;
+        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      }
+      console.log(registro);
+    };
 
     $interval(atualizaHorario, 1000);
 
-    function atualizaHorario () {
+    function atualizaHorario() {
       return $scope.horarioAtual = new Date().timeNow();
     }
 
-    function calcularHorasTrabalhadas (pontos) {
+    function calcularHorasTrabalhadas(pontos) {
       var diffs = [];
       for (var i in pontos) {
         if (i % 2 != 0) {
-          diffs.push(hmh.diff(toHMH(pontos[i-1]), toHMH(pontos[i])).toString().replace(/\s+/g, ''));
+          diffs.push(hmh.diff(toHMH(pontos[i - 1]), toHMH(pontos[i])).toString().replace(/\s+/g, ''));
         }
       }
       return hmh.sum(diffs).toString() || 0;
     }
 
-    function formatPonto (p) {
+    function formatPonto(p) {
       return p.charAt(0) + p.charAt(1) + ":" + p.charAt(2) + p.charAt(3);
     }
 
-    function toHMH (p) {
+    function toHMH(p) {
       p = p.match(/\d+/g).join('');
       return p.charAt(0) + p.charAt(1) + "h" + p.charAt(2) + p.charAt(3) + "m";
     }
