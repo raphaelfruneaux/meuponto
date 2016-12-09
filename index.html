@@ -64,10 +64,6 @@
 						  <option value="11">Dezembro</option>
 						</select>
 					</div>
-					<!-- <div class="date">
-						<i class="calendar icon"></i> {{ dataAtual | date: 'dd De MMMM, yyyy' }}
-						<i class="wait icon"></i> {{ horarioAtual }}
-					</div> -->
 					<input type="submit" id="submit" value="Submit" class="hidden" />
 				</form>
 			</div>
@@ -104,12 +100,8 @@
 							<i class="disabled calendar icon"></i>
 							<div class="content">
 								Hoje
-								<div class="sub header">
-									{{ dataAtual | date : 'EEEE' }}
-									<span ng-if="current.feriado">(feriado)</span>
-								</div>
 								<div class="ui dropdown dropdown-settings">
-									<div class="text"><i class="small setting icon"></i></div>
+									<div class="text"><i class="small setting icon icon-no-margin"></i></div>
 									<div class="menu">
 										<div class="item">
 											<b ng-if="current.feriado">Feriado</b>
@@ -119,6 +111,10 @@
 										<div class="item" ng-click="counter.marcarComoFeriado()" ng-if="!current.feriado">Mudar para Feriado</div>
 										<div class="item" ng-click="counter.desmarcarComoFeriado()" ng-if="current.feriado">Mudar para Dia útil</div>
 									</div>
+								</div>
+								<div class="sub header">
+									{{ dataAtual | date : 'EEEE' }}
+									<div class="ui mini horizontal yellow label" ng-if="current.feriado">feriado</div>
 								</div>
 							</div>
 						</h4>
@@ -161,12 +157,8 @@
 								<i class="disabled calendar icon"></i>
 								<div class="content">
 									{{ registro.date | date:'dd MMMM, yyyy' }}
-									<div class="sub header">
-										{{registro.date | date:'EEEE'}}
-										<span ng-if="registro.feriado">(feriado)</span>
-									</div>
 									<div class="ui dropdown dropdown-settings">
-										<div class="text"><i class="small setting icon"></i></div>
+										<div class="text"><i class="small setting icon icon-no-margin"></i></div>
 										<div class="menu">
 											<div class="item">
 												<b ng-if="registro.feriado">Feriado</b>
@@ -176,6 +168,10 @@
 											<div class="item" ng-click="counter.marcarComoFeriado(registro)" ng-if="!registro.feriado">Mudar para Feriado</div>
 											<div class="item" ng-click="counter.desmarcarComoFeriado(registro)" ng-if="registro.feriado">Mudar para Dia útil</div>
 										</div>
+									</div>
+									<div class="sub header">
+										{{registro.date | date:'EEEE'}}
+										<div class="ui mini horizontal yellow label" ng-if="registro.feriado">feriado</div>
 									</div>
 								</div>
 							</h4>
