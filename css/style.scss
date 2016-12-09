@@ -74,11 +74,19 @@ body {
 
 .table {
 	h4.header {
-		width: 170px;
+		width: 185px;
 	}
 }
 
 .ui.horizontal.divider {
 	width: 50%;
 	margin: 0 auto;
+}
+
+.icon-settings {
+	display: inline-block;
+}
+
+.icon-no-margin {
+	margin: 0 !important;
 }
