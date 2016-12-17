@@ -4,6 +4,8 @@
   function CounterController($scope, $filter, $interval) {
     var vm = this;
 
+    vm.saldo = { total: '', sinal: '' }
+
     Date.prototype.today = function () {
       return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
     }
@@ -18,9 +20,11 @@
       pontoEletronico.user.name = prompt("Informe o seu nome:");
       pontoEletronico.user.email = prompt("Informe o seu email:");
       pontoEletronico.user.registros = [];
+      pontoEletronico.user.saldo = { total: '', sinal: '' };
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
     } else {
       var pontoEletronico = dataStorage;
+      initializeSaldo();
     }
 
     var date = new Date();
@@ -71,7 +75,7 @@
     vm.saidaSugerida = function () {
       var horarioAtual = toHMH($scope.horarioAtual);
       var horasTrabalhadas = vm.horasTrabalhadas();
-      
+
 
       if (horasTrabalhadas === undefined || horasTrabalhadas == 0)
         return 0
@@ -86,7 +90,7 @@
         if ($scope.pontos.length == 1) {
           jornada = hmh.sum(jornada + " 1h").toString();
         }
-        
+
         var horarioDiff = hmh.sub(jornada + " " + horasTrabalhadas);
 
         if (vm.verificaHoraExtra() > 0) {
@@ -143,9 +147,30 @@
       }
     };
 
+    vm.preparaSaldo = function () {
+      if (pontoEletronico.user.hasOwnProperty('saldo')) {
+        if (!pontoEletronico.user.saldo.total || !pontoEletronico.user.saldo.sinal) {
+          return false;
+        }
+
+        var sinal = pontoEletronico.user.saldo.sinal == 'N' ? '-' : '';
+
+        return {
+          toString: function () { return sinal + toHMH(pontoEletronico.user.saldo.total) },
+          isNegative: function () { return pontoEletronico.user.saldo.sinal == 'N' },
+          total: pontoEletronico.user.saldo.total
+        }
+      } 
+      return false
+    }
+
     vm.bancoDeHorasTotal = function () {
       var registrosCredito = [];
       var registroDebito = [];
+
+      var subtotal = null;
+      var total = null;
+      var saldo = vm.preparaSaldo();
 
       var dataBase = today.split('-');
       var mesAtual = parseInt(dataBase[1]);
@@ -160,10 +185,21 @@
         }
       });
 
+      if (saldo) {
+        if (saldo.isNegative()) {
+          registroDebito.push(saldo.toString())
+        } else {
+          registrosCredito.push(saldo.toString())
+        }
+      }
+
       var credito = hmh.sum(registrosCredito, 'minutes').toString() || 0;
       var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
 
-      return hmh.sub(credito + " " + debito);
+      total = hmh.sub(credito + " " + debito);
+      
+      return total
+
     };
 
     vm.bancoDeHorasMes = function () {
@@ -226,18 +262,73 @@
       registro = r || current
       if (typeof registro === 'object') {
         registro.feriado = true;
-        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+        save()
       }
-      console.log(registro);
     };
 
     vm.desmarcarComoFeriado = function (r) {
       registro = r || current
       if (typeof registro === 'object') {
         registro.feriado = false;
-        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+        save()
       }
-      console.log(registro);
+    };
+
+    vm.isDescanso = function (r) {
+      registro = r || current;
+      var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
+      return (d.getDay() == 6) || (d.getDay() == 0);
+    };
+
+    vm.modalAdicionarHoras = function () {
+      $('[data-modal="adicionar-horas"]').modal({
+        blurring: true
+      }).modal('show');
+    };
+
+    vm.fechaModalAdicionarHoras = function (form) {
+      if (form) {
+        form.$setPristine();
+        form.$setUntouched();
+        initializeSaldo();
+      }
+
+      $('[data-modal="adicionar-horas"]').modal('hide');
+    };
+
+    vm.salvarSaldoAnterior = function () {
+      if (!vm.saldo.total || !vm.saldo.sinal) {
+        return false
+      }
+
+      if (!pontoEletronico.user.hasOwnProperty('saldo')) {
+        pontoEletronico.user.saldo = { total: '', sinal: ''}
+      }
+
+      console.log(vm.saldo.total);
+
+      pontoEletronico.user.saldo.total = formatPonto(angular.copy(vm.saldo.total.replace(/[^\d]/g, '')));
+      pontoEletronico.user.saldo.sinal = angular.copy(vm.saldo.sinal);
+      
+      save();
+
+      vm.fechaModalAdicionarHoras();
+    };
+
+    vm.resetSaldo = function (form) {
+      if (pontoEletronico.user.hasOwnProperty('saldo')) {
+        delete pontoEletronico.user.saldo
+      }
+
+      if (form) {
+        form.$setPristine();
+        form.$setUntouched();
+        initializeSaldo();
+      }
+
+      save();
+      
+      vm.fechaModalAdicionarHoras();
     };
 
     $interval(atualizaHorario, 1000);
@@ -263,6 +354,18 @@
     function toHMH(p) {
       p = p.match(/\d+/g).join('');
       return p.charAt(0) + p.charAt(1) + "h" + p.charAt(2) + p.charAt(3) + "m";
+    }
+
+    function save() {
+      localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+    }
+
+    function initializeSaldo() {
+      if (!pontoEletronico.user.hasOwnProperty('saldo')) {
+        pontoEletronico.user.saldo = { total: '', sinal: '' };
+      }
+      vm.saldo.total = pontoEletronico.user.saldo.total;
+      vm.saldo.sinal = pontoEletronico.user.saldo.sinal;
     }
   };
 

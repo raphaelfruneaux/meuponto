@@ -36,8 +36,11 @@ body {
     margin-left: 0;
   }
 }
-
-.ui.container .ui.form .input_ponto, .ui.input-ponto input {
+.input_ponto {
+	width: 80px;
+}
+.ui.container .ui.form .input_ponto, .ui.input-ponto input,
+.modal .ui.form .input_ponto, .ui.input-ponto input {
 	width: 80px;
 	text-align: center;
 }
@@ -65,6 +68,28 @@ body {
 		&.day .ui.dropdown {
 			min-width: 65px;
 		}
+
+		&.more-options {
+			cursor: pointer;
+
+			&:hover {
+				.icon {
+					color: #000;
+				}
+			}
+
+			> label { 
+				color: #a5a5a5;
+				line-height: 20px; 
+			}
+
+			
+			.icon { 
+				margin-top: 10px;
+				font-size: 26px;
+				transition: all .3s ease;
+			}
+		}
 	}
 	.date {
 		display: inline-block;
@@ -89,4 +114,27 @@ body {
 
 .icon-no-margin {
 	margin: 0 !important;
+}
+
+.ui.modal {
+	&.mini {
+		width: 400px;
+		margin-top: -220px !important;
+		margin-bottom: 0;
+		margin-right: 0; 
+		margin-left: -200px;
+	}
+	.ui.form .field {
+		display: inline-table;
+		margin-right: 5px;
+	}
+	> .close {
+		top: 1.0535rem;
+		right: 1rem;
+		color: rgba(0,0,0,.87);
+	}
+}
+
+.center {
+	text-align: center;
 }
