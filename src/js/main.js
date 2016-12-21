@@ -20,7 +20,7 @@
         console.log(authData);
         console.log("User " + authData.uid + " is logged in with " + authData.provider);
 
-        if($('[data-modal="login"]').hasClass('active')) {
+        if ($('[data-modal="login"]').hasClass('active')) {
           $('[data-modal="login"]').modal('hide');
         }
 
@@ -190,7 +190,7 @@
         return 0
       var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
       var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
-      var jornada = (d.getDay() == 5) ? "8h" : (d.getDay() == 6 || registro.feriado) ? "0h" : "9h";
+      var jornada = (d.getDay() == 6 || registro.feriado) ? "0h" : (d.getDay() == 5) ? "8h" : "9h";
       var extra = hmh.diff(jornada, horasTrabalhadas);
       registro.extra = extra.toString();
       return extra.toString() || 0;
