@@ -1,10 +1,47 @@
 (function () {
   "use strict";
 
-  function CounterController($scope, $filter, $interval) {
+  var config = {
+    apiKey: "AIzaSyAG7SiJpRPyCuNKOnC3MWh3bsxrjF3MkX8",
+    authDomain: "meuponto-22c8a.firebaseapp.com",
+    databaseURL: "https://meuponto-22c8a.firebaseio.com",
+    storageBucket: "meuponto-22c8a.appspot.com",
+    messagingSenderId: "453391659544"
+  };
+  firebase.initializeApp(config);
+
+  function CounterController($scope, $filter, $interval, $firebaseAuth) {
+    var firebaseAuth = firebase.auth();
+
     var vm = this;
 
-    vm.saldo = { total: '', sinal: '' }
+    vm.authDataCallback = function (authData) {
+      if (authData) {
+        console.log(authData);
+        console.log("User " + authData.uid + " is logged in with " + authData.provider);
+
+        if($('[data-modal="login"]').hasClass('active')) {
+          $('[data-modal="login"]').modal('hide');
+        }
+
+      } else {
+        console.log("User is logged out");
+        $scope.$apply(function () {
+          $('[data-modal="login"]').modal({
+            blurring: true,
+            keyboardShortcuts: false,
+            closable: false
+          }).modal('show');
+        })
+      }
+    };
+
+    firebaseAuth.onAuthStateChanged(vm.authDataCallback);
+
+
+    vm.user = null;
+    vm.saldo = { total: '', sinal: '' };
+    vm.loading = false;
 
     Date.prototype.today = function () {
       return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
@@ -50,6 +87,33 @@
     $scope.pontoEletronico = pontoEletronico;
     $scope.showInputPonto = false;
     $scope.horario_anterior = {};
+
+    vm.login = function () {
+      vm.loading = true;
+
+      firebaseAuth.signInWithEmailAndPassword($scope.user.email, $scope.user.password)
+        .then(function (err, authData) {
+          vm.loading = false;
+          if (err) throw err;
+          console.log(arguments);
+        })
+        .catch(function (error) {
+          // Handle Errors here.
+          vm.loading = false;
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // ...
+        });
+    };
+
+    vm.logout = function () {
+      firebaseAuth.signOut().then(function () {
+        // Sign-out successful.
+        vm.user = {}
+      }, function (error) {
+        // An error happened.
+      });
+    };
 
     vm.addPonto = function (arg) {
       if (arg) {
@@ -160,7 +224,7 @@
           isNegative: function () { return pontoEletronico.user.saldo.sinal == 'N' },
           total: pontoEletronico.user.saldo.total
         }
-      } 
+      }
       return false
     }
 
@@ -197,7 +261,7 @@
       var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
 
       total = hmh.sub(credito + " " + debito);
-      
+
       return total
 
     };
@@ -302,14 +366,14 @@
       }
 
       if (!pontoEletronico.user.hasOwnProperty('saldo')) {
-        pontoEletronico.user.saldo = { total: '', sinal: ''}
+        pontoEletronico.user.saldo = { total: '', sinal: '' }
       }
 
       console.log(vm.saldo.total);
 
       pontoEletronico.user.saldo.total = formatPonto(angular.copy(vm.saldo.total.replace(/[^\d]/g, '')));
       pontoEletronico.user.saldo.sinal = angular.copy(vm.saldo.sinal);
-      
+
       save();
 
       vm.fechaModalAdicionarHoras();
@@ -327,7 +391,7 @@
       }
 
       save();
-      
+
       vm.fechaModalAdicionarHoras();
     };
 
@@ -369,8 +433,8 @@
     }
   };
 
-  CounterController.$inject = ['$scope', '$filter', '$interval'];
+  CounterController.$inject = ['$scope', '$filter', '$interval', '$firebaseAuth'];
 
-  angular.module('myApp', ['ui.mask']).controller('CounterController', CounterController);
+  angular.module('myApp', ['ui.mask', 'firebase']).controller('CounterController', CounterController);
 
 })();

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html ng-app="myApp" data-framework="firebase">
 
 <head>
 	<meta charset="utf-8">
@@ -10,15 +10,10 @@
 	</script>
 
 	<link rel="stylesheet" href="dist/css/styles.css">
-	
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.8/angular-locale_pt-br.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script type="text/javascript" src="dist/js/vendors.js"></script>
-	<script type="text/javascript" src="dist/js/main.js"></script>
 </head>
+<body ng-controller="CounterController as counter" ng-cloak >
+	<!--ng-class="{'blurring dimmable dimmed scrolling': !counter.user}">-->
 
-<body ng-controller="CounterController as counter" ng-cloak>
 	<div class="ui container">
 		<h1>
 			<i class="calendar icon"></i> {{ dataAtual | date: 'dd MMMM, yyyy' }}
@@ -58,8 +53,7 @@
 					</div>
 					<div class="field more-options">
 						<label for="">mais opções</label>
-						<i class="ellipsis horizontal icon" ng-click="counter.modalAdicionarHoras()"></i>
-						<!--<div class="ui dropdown dropdown-settings">
+						<div class="ui dropdown dropdown-settings">
 							<div class="text">
 								<i class="ellipsis horizontal icon"></i>
 							</div>
@@ -67,8 +61,12 @@
 								<div class="item" ng-click="counter.modalAdicionarHoras()">
 									Adicionar horas
 								</div>
+								<div class="divider"></div>
+								<div class="item" ng-click="counter.logout()">
+									Sair
+								</div>
 							</div>
-						</div>-->
+						</div>
 					</div>
 					<input type="submit" id="submit" value="Submit" class="hidden" />
 				</form>
@@ -249,7 +247,7 @@
 		<i class="close icon" ng-click="counter.fechaModalAdicionarHoras(formSalvarSaldo);"></i>
 		<div class="header">Adicionar Horas</div>
 		<div class="content center">
-			<div class="ui form">
+			<div class="ui form horizontal">
 				<form name="formSalvarSaldo" novalidate>
 					<div class="field">
 						<label>Total</label>
@@ -276,7 +274,48 @@
 		</div>
 	</div>
 
+	<div class="ui modal mini" data-modal="login">
+		<div class="header">Login</div>
+		<div class="content">
+			<div class="ui form">
+				<form name="formLogin" ng-submit="counter.login()" novalidate>
+					<div class="field block">
+						<input type="text" class="input-block" name="username" placeholder="Usuario" ng-model="user.email" autofocus required>
+					</div>
+					<div class="field block">
+						<input type="password" class="input-block" name="password" placeholder="Senha" ng-model="user.password" required>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="actions">
+			<button type="button" class="ui fluid button green" 
+				ng-click="counter.login()"
+				ng-disabled="formLogin.$invalid"
+				ng-class="{
+					'loading': counter.loading
+				}">Logar</button>
+		</div>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.8/angular-locale_pt-br.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+	<script src="//www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angularFire/2.1.0/angularfire.min.js"></script>
+
+	<script src="dist/js/vendors.js"></script>
+	<script src="src/js/main.js"></script>
 	<script>
+		// firebase.initializeApp({
+		// 	apiKey: "AIzaSyAG7SiJpRPyCuNKOnC3MWh3bsxrjF3MkX8",
+		// 	authDomain: "meuponto-22c8a.firebaseapp.com",
+		// 	databaseURL: "https://meuponto-22c8a.firebaseio.com",
+		// 	storageBucket: "meuponto-22c8a.appspot.com",
+		// 	messagingSenderId: "453391659544"
+		// });
+
 		$(document).ready(function () {
 			$('.ui.dropdown').dropdown();
 			$('.ui.dropdown-settings').dropdown({
