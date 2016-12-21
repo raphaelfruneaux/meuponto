@@ -9,12 +9,11 @@
 		var module = window.module || {}
 	</script>
 
-	<link rel="stylesheet" href="dist/css/styles.css">
+<link rel="stylesheet" href="dist/css/styles.css">
 </head>
-<body ng-controller="CounterController as counter" ng-cloak >
-	<!--ng-class="{'blurring dimmable dimmed scrolling': !counter.user}">-->
 
-	<div class="ui container">
+<body ng-controller="CounterController as counter">
+	<div class="ui container" ng-cloak="">
 		<h1>
 			<i class="calendar icon"></i> {{ dataAtual | date: 'dd MMMM, yyyy' }}
 			<i class="wait icon"></i> {{ horarioAtual }}
@@ -286,15 +285,17 @@
 						<input type="password" class="input-block" name="password" placeholder="Senha" ng-model="user.password" required>
 					</div>
 				</form>
+				<div class="ui negative message" ng-if="loginForm.hasError">
+					<i class="close icon" ng-click="loginForm.hasError = false;"></i>
+					<div class="header">Oops! Sorry but an error occurred.</div>
+					<p>{{ loginForm.error.message }}</p>
+				</div>
 			</div>
 		</div>
 		<div class="actions">
-			<button type="button" class="ui fluid button green" 
-				ng-click="counter.login()"
-				ng-disabled="formLogin.$invalid"
-				ng-class="{
+			<button type="button" class="ui fluid button teal" ng-click="counter.login()" ng-disabled="formLogin.$invalid" ng-class="{
 					'loading': counter.loading
-				}">Logar</button>
+				}"><u>Sign in</u> or <u>Sign up</u></button>
 		</div>
 	</div>
 
@@ -308,14 +309,6 @@
 	<script src="dist/js/vendors.js"></script>
 	<script src="src/js/main.js"></script>
 	<script>
-		// firebase.initializeApp({
-		// 	apiKey: "AIzaSyAG7SiJpRPyCuNKOnC3MWh3bsxrjF3MkX8",
-		// 	authDomain: "meuponto-22c8a.firebaseapp.com",
-		// 	databaseURL: "https://meuponto-22c8a.firebaseio.com",
-		// 	storageBucket: "meuponto-22c8a.appspot.com",
-		// 	messagingSenderId: "453391659544"
-		// });
-
 		$(document).ready(function () {
 			$('.ui.dropdown').dropdown();
 			$('.ui.dropdown-settings').dropdown({

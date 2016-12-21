@@ -10,19 +10,29 @@
   };
   firebase.initializeApp(config);
 
-  function CounterController($scope, $filter, $interval, $firebaseAuth) {
-    var firebaseAuth = firebase.auth();
-
+  function CounterController($scope, $filter, $interval) {
     var vm = this;
 
     vm.authDataCallback = function (authData) {
       if (authData) {
-        console.log(authData);
         console.log("User " + authData.uid + " is logged in with " + authData.provider);
 
         if ($('[data-modal="login"]').hasClass('active')) {
           $('[data-modal="login"]').modal('hide');
         }
+
+        firebase.database().ref('users/' + authData.uid).set({
+          uid: authData.uid,
+          name: pontoEletronico.user.name,
+          email: pontoEletronico.user.email
+        });
+
+        firebase.database().ref('users/' + authData.uid + '/saldo').set({
+          total: pontoEletronico.user.saldo.total,
+          sinal: pontoEletronico.user.saldo.sinal
+        })
+
+        firebase.database().ref('users/' + authData.uid + '/registros').set(pontoEletronico.user.registros)
 
       } else {
         console.log("User is logged out");
@@ -36,7 +46,7 @@
       }
     };
 
-    firebaseAuth.onAuthStateChanged(vm.authDataCallback);
+    firebase.auth().onAuthStateChanged(vm.authDataCallback);
 
 
     vm.user = null;
@@ -87,27 +97,37 @@
     $scope.pontoEletronico = pontoEletronico;
     $scope.showInputPonto = false;
     $scope.horario_anterior = {};
+    $scope.loginForm = { hasError: false, error: {}}
 
     vm.login = function () {
       vm.loading = true;
 
-      firebaseAuth.signInWithEmailAndPassword($scope.user.email, $scope.user.password)
-        .then(function (err, authData) {
+      firebase.auth().signInWithEmailAndPassword($scope.user.email, $scope.user.password)
+        .catch(function (err) {
+          if (err) {
+            console.error('signInWithEmailAndPasswordERROR', err);
+
+            if (err.code == 'auth/user-not-found') {
+              firebase.auth().createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
+              .catch(function (err) {
+                if (err) {
+                  console.error('createUserWithEmailAndPasswordERROR', err);
+                }
+              }).then(function () {
+                vm.loading = false;
+              })
+            } else {
+              $scope.loginForm.hasError = true;
+              $scope.loginForm.error = err;
+            }
+          }
+        }).then(function () {
           vm.loading = false;
-          if (err) throw err;
-          console.log(arguments);
-        })
-        .catch(function (error) {
-          // Handle Errors here.
-          vm.loading = false;
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          // ...
         });
     };
 
     vm.logout = function () {
-      firebaseAuth.signOut().then(function () {
+      firebase.auth().signOut().then(function () {
         // Sign-out successful.
         vm.user = {}
       }, function (error) {
@@ -433,7 +453,7 @@
     }
   };
 
-  CounterController.$inject = ['$scope', '$filter', '$interval', '$firebaseAuth'];
+  CounterController.$inject = ['$scope', '$filter', '$interval'];
 
   angular.module('myApp', ['ui.mask', 'firebase']).controller('CounterController', CounterController);
 
