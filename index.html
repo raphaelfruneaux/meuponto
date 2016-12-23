@@ -76,17 +76,18 @@
 				Saída sugerida:
 				<div class="detail">{{ counter.saidaSugerida() }}</div>
 			</div>
-			<div class="ui label animate" ng-class="{
-          'green': !counter.bancoDeHorasTotal().isNegative,
-          'red': counter.bancoDeHorasTotal().isNegative
-        }">
+			<div class="ui label animate" 
+				ng-class="{
+					'green': !counter.bancoDeHorasTotal().isNegative,
+					'red': counter.bancoDeHorasTotal().isNegative
+				}">
 				Banco de horas:
 				<div class="detail">{{ counter.bancoDeHorasTotal().toString() || 0 }}</div>
 			</div>
 			<div class="ui label animate" ng-class="{
-					'green': !counter.bancoDeHorasMes().isNegative,
-          'red': counter.bancoDeHorasMes().isNegative
-        }">
+				'green': !counter.bancoDeHorasMes().isNegative,
+				'red': counter.bancoDeHorasMes().isNegative
+			}">
 				Banco de horas (ref: {{ counter.periodo.min | date:'dd MMM' }} a {{ counter.periodo.max | date:'dd MMM' }} ):
 				<div class="detail">{{ counter.bancoDeHorasMes().toString() || 0 }}</div>
 			</div>
@@ -150,9 +151,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="ui horizontal divider">
-			Dias anteriores
-		</div>
+		<div class="ui horizontal divider">Dias anteriores</div>
 		<div class="previous-day">
 			<table class="ui very basic collapsing celled table">
 				<tbody>
@@ -228,18 +227,19 @@
 					</div>
 				</div>
 			</div>
-			-->
+		-->
 		<!--
 			<div class="bottom-bar">
-			<button class="ui blue basic button">
-				<i class="icon download"></i>
-				Importar JSON
-			</button>
-			<button class="ui green basic button">
-				<i class="icon upload"></i>
-				Exportar para JSON
-			</button>
-		</div> -->
+				<button class="ui blue basic button">
+					<i class="icon download"></i>
+					Importar JSON
+				</button>
+				<button class="ui green basic button">
+					<i class="icon upload"></i>
+					Exportar para JSON
+				</button>
+			</div> 
+		-->
 	</div>
 
 	<div class="ui modal mini" data-modal="adicionar-horas">
@@ -293,9 +293,14 @@
 			</div>
 		</div>
 		<div class="actions">
-			<button type="button" class="ui fluid button teal" ng-click="counter.login()" ng-disabled="formLogin.$invalid" ng-class="{
+			<button type="button" class="ui fluid button teal" 
+				ng-click="counter.login()"
+				ng-disabled="formLogin.$invalid"
+				ng-class="{
 					'loading': counter.loading
-				}"><u>Sign in</u> or <u>Sign up</u></button>
+				}">
+				<u>Sign in</u> or <u>Sign up</u>
+			</button>
 		</div>
 	</div>
 

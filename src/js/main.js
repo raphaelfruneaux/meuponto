@@ -21,18 +21,23 @@
           $('[data-modal="login"]').modal('hide');
         }
 
-        firebase.database().ref('users/' + authData.uid).set({
-          uid: authData.uid,
-          name: pontoEletronico.user.name,
-          email: pontoEletronico.user.email
-        });
-
-        firebase.database().ref('users/' + authData.uid + '/saldo').set({
-          total: pontoEletronico.user.saldo.total,
-          sinal: pontoEletronico.user.saldo.sinal
+        firebase.database().ref('users/' + authData.uid).once('value').then(function (snapshot) {
+          console.log('SNAPSHOT:', snapshot.val());
+          console.log('PONTOELETRONICO:', pontoEletronico);
         })
 
-        firebase.database().ref('users/' + authData.uid + '/registros').set(pontoEletronico.user.registros)
+        // firebase.database().ref('users/' + authData.uid).set({
+        //   uid: authData.uid,
+        //   name: pontoEletronico.user.name,
+        //   email: pontoEletronico.user.email
+        // });
+
+        // firebase.database().ref('users/' + authData.uid + '/saldo').set({
+        //   total: pontoEletronico.user.saldo.total,
+        //   sinal: pontoEletronico.user.saldo.sinal
+        // })
+
+        // firebase.database().ref('users/' + authData.uid + '/registros').set(pontoEletronico.user.registros)
 
       } else {
         console.log("User is logged out");
@@ -42,7 +47,7 @@
             keyboardShortcuts: false,
             closable: false
           }).modal('show');
-        })
+        });
       }
     };
 
@@ -277,13 +282,12 @@
         }
       }
 
-      var credito = hmh.sum(registrosCredito, 'minutes').toString() || 0;
-      var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
+      var credito = hmh.sum(registrosCredito, 'minutes').toString() || '0h';
+      var debito = hmh.sum(registroDebito, 'minutes').toString() || '0h';
 
       total = hmh.sub(credito + " " + debito);
 
       return total
-
     };
 
     vm.bancoDeHorasMes = function () {
@@ -312,8 +316,8 @@
         }
       });
 
-      var credito = hmh.sum(registrosCredito, 'minutes').toString() || 0;
-      var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
+      var credito = hmh.sum(registrosCredito, 'minutes').toString() || '0h';
+      var debito = hmh.sum(registroDebito, 'minutes').toString() || '0h';
 
       vm.periodo = {};
       vm.periodo.min = dataMin;
