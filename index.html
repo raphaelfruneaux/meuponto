@@ -76,8 +76,7 @@
 				Saída sugerida:
 				<div class="detail">{{ counter.saidaSugerida() }}</div>
 			</div>
-			<div class="ui label animate" 
-				ng-class="{
+			<div class="ui label animate" ng-class="{
 					'green': !counter.bancoDeHorasTotal().isNegative,
 					'red': counter.bancoDeHorasTotal().isNegative
 				}">
@@ -293,10 +292,7 @@
 			</div>
 		</div>
 		<div class="actions">
-			<button type="button" class="ui fluid button teal" 
-				ng-click="counter.login()"
-				ng-disabled="formLogin.$invalid"
-				ng-class="{
+			<button type="button" class="ui fluid button teal" ng-click="counter.login()" ng-disabled="formLogin.$invalid" ng-class="{
 					'loading': counter.loading
 				}">
 				<u>Sign in</u> or <u>Sign up</u>
