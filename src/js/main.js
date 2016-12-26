@@ -20,8 +20,6 @@
       return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
     }
 
-    firebase.auth().onAuthStateChanged(authDataCallback);
-
     var vm = this;
     vm.user = null;
     vm.saldo = { total: '', sinal: '' };
@@ -29,9 +27,7 @@
 
     var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
     if (!dataStorage) {
-      var pontoEletronico = { user: {} };
-      // pontoEletronico.user.name = prompt("Informe o seu nome:");
-      // pontoEletronico.user.email = prompt("Informe o seu email:");
+      var pontoEletronico = { user: { name: '', email: '' } };
       pontoEletronico.user.registros = [];
       pontoEletronico.user.saldo = { total: '', sinal: '' };
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
@@ -55,15 +51,17 @@
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
     }
 
-    $scope.ponto = '';
-    $scope.pontos = current.pontos;
     $scope.current = current;
+    $scope.pontos = current.pontos;
+    $scope.ponto = '';
     $scope.dataAtual = date;
     $scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
     $scope.showInputPonto = false;
     $scope.horario_anterior = {};
     $scope.loginForm = { hasError: false, error: {} }
+
+    firebase.auth().onAuthStateChanged(authDataCallback);
 
     vm.login = function () {
       vm.loading = true;
@@ -98,8 +96,14 @@
       firebase.auth().signOut().then(function () {
         // Sign-out successful.
         vm.user = {}
-      }, function (error) {
+        localStorage.removeItem("pontoEletronico");
+        var pontoEletronico = { user: { name: '', email: '' } };
+        pontoEletronico.user.registros = [];
+        pontoEletronico.user.saldo = { total: '', sinal: '' };
+        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      }, function (err) {
         // An error happened.
+        console.error(err);
       });
     };
 
@@ -160,7 +164,7 @@
       var pontos = (p) ? p : $scope.pontos;
       var pontosAux = angular.copy(pontos);
 
-      if (pontosAux.length % 2 != 0) {
+      if (pontosAux && pontosAux.length % 2 != 0) {
         pontosAux.push(angular.copy($scope.horarioAtual).match(/\d{2}:\d{2}/).join(':'));
       }
 
@@ -445,7 +449,7 @@
       vm.saldo.sinal = pontoEletronico.user.saldo.sinal;
     }
 
-    function initializeApp() {}
+    function initializeApp() { }
 
     function authDataCallback(authData) {
       if (authData) {
@@ -457,21 +461,34 @@
         }
 
         firebase.database().ref('users/' + authData.uid).once('value').then(function (snapshot) {
-          if (!snapshot.val()) {
+          var snapshoptUser = snapshot.val();
+          if (!snapshoptUser) {
             firesave({
               uid: authData.uid,
               name: pontoEletronico.user.name,
               email: authData.email
             })
-            firesaveSaldo()
-            firesavePonto()
+            firesavePonto();
+            firesaveSaldo();
           } else {
-            if (pontoEletronico.user.registros.length < snapshot.val().registros.length) {
-              pontoEletronico.user.registros = snapshot.val().registros;
+            if (!pontoEletronico.user.name || !pontoEletronico.user.email) {
+              pontoEletronico.user.name = snapshoptUser.name;
+              pontoEletronico.user.email = snapshoptUser.email;
+              pontoEletronico.user.uid = snapshoptUser.uid;
+              save()
             }
 
-            if (pontoEletronico.user.saldo.total != snapshot.val().saldo.total) {
-              pontoEletronico.user.saldo = snapshot.val().saldo;
+            if (snapshoptUser.registros && pontoEletronico.user.registros.length < snapshoptUser.registros.length) {
+              pontoEletronico.user.registros = snapshoptUser.registros;
+              current = $filter('filter')(pontoEletronico.user.registros, { date: today })[0];
+              $scope.current = current;
+              $scope.pontos = current.pontos;
+              save()
+            }
+
+            if (pontoEletronico.user.saldo.total != snapshoptUser.saldo.total) {
+              pontoEletronico.user.saldo = snapshoptUser.saldo;
+              save()
             }
           }
         });
