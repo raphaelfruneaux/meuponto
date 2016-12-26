@@ -15,12 +15,10 @@ gulp.task('sass', function(){
   console.log("Salvando em: "+ 'css/style.css');
   console.log('----------------------');
 
-  return gulp.src('./src/css/style.scss')
-  	.pipe(sourcemaps.init())
+  return gulp.src('./src/css/*.scss')
     .pipe(sass()) // Converts Sass to CSS with gulp-sass
     .pipe(autoprefixer())
-  	.pipe(sourcemaps.write())
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('./src/css/'))
     .pipe(browsersync.stream());
 });
 
@@ -28,7 +26,8 @@ gulp.task('browser-sync', function () {
     browsersync.init({
         server: {
           baseDir: './'
-        }
+        },
+        open: false
     });
 });
 
@@ -79,6 +78,6 @@ gulp.task('clean', function () {
 gulp.task('default', function() {
 	runsequence('sass', 'bundle', 'browser-sync');
   
-  gulp.watch('css/style.scss',['sass']);
+  gulp.watch('./src/css/*.scss',['sass', 'bundle-css']);
   gulp.watch('index.html').on('change', browsersync.reload);
 });

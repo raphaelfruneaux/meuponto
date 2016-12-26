@@ -128,13 +128,24 @@ body {
 		display: inline-table;
 		margin-right: 5px;
 	}
-	> .close {
+
+	& > .close {
 		top: 1.0535rem;
 		right: 1rem;
 		color: rgba(0,0,0,.87);
 	}
+	.actions>.button:first-child {
+		margin-left: 0 !important;
+	}
 }
+
 
 .center {
 	text-align: center;
+}
+
+.block {
+	width: 100% !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
 }

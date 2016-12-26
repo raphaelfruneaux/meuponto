@@ -1,11 +1,17 @@
 (function () {
   "use strict";
 
+  var config = {
+    apiKey: "AIzaSyAG7SiJpRPyCuNKOnC3MWh3bsxrjF3MkX8",
+    authDomain: "meuponto-22c8a.firebaseapp.com",
+    databaseURL: "https://meuponto-22c8a.firebaseio.com",
+    storageBucket: "meuponto-22c8a.appspot.com",
+    messagingSenderId: "453391659544"
+  };
+
+  firebase.initializeApp(config);
+
   function CounterController($scope, $filter, $interval) {
-    var vm = this;
-
-    vm.saldo = { total: '', sinal: '' }
-
     Date.prototype.today = function () {
       return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
     }
@@ -14,11 +20,14 @@
       return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
     }
 
+    var vm = this;
+    vm.user = null;
+    vm.saldo = { total: '', sinal: '' };
+    vm.loading = false;
+
     var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
     if (!dataStorage) {
-      var pontoEletronico = { user: {} };
-      pontoEletronico.user.name = prompt("Informe o seu nome:");
-      pontoEletronico.user.email = prompt("Informe o seu email:");
+      var pontoEletronico = { user: { name: '', email: '' } };
       pontoEletronico.user.registros = [];
       pontoEletronico.user.saldo = { total: '', sinal: '' };
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
@@ -42,14 +51,61 @@
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
     }
 
-    $scope.ponto = '';
-    $scope.pontos = current.pontos;
     $scope.current = current;
+    $scope.pontos = current.pontos;
+    $scope.ponto = '';
     $scope.dataAtual = date;
     $scope.horarioAtual = date.timeNow();
     $scope.pontoEletronico = pontoEletronico;
     $scope.showInputPonto = false;
     $scope.horario_anterior = {};
+    $scope.loginForm = { hasError: false, error: {} }
+
+    firebase.auth().onAuthStateChanged(authDataCallback);
+
+    vm.login = function () {
+      vm.loading = true;
+
+      firebase.auth().signInWithEmailAndPassword($scope.user.email, $scope.user.password)
+        .catch(function (err) {
+          if (err) {
+            console.error('signInWithEmailAndPasswordERROR', err);
+
+            if (err.code == 'auth/user-not-found') {
+              firebase.auth().createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
+                .catch(function (err) {
+                  if (err) {
+                    console.error('createUserWithEmailAndPasswordERROR', err);
+                  }
+                }).then(function () {
+                  vm.loading = false;
+                })
+            } else {
+              $scope.loginForm.hasError = true;
+              $scope.loginForm.error = err;
+            }
+          }
+        }).then(function () {
+          vm.loading = false;
+        });
+    };
+
+    vm.logout = function () {
+      save();
+
+      firebase.auth().signOut().then(function () {
+        // Sign-out successful.
+        vm.user = {}
+        localStorage.removeItem("pontoEletronico");
+        var pontoEletronico = { user: { name: '', email: '' } };
+        pontoEletronico.user.registros = [];
+        pontoEletronico.user.saldo = { total: '', sinal: '' };
+        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      }, function (err) {
+        // An error happened.
+        console.error(err);
+      });
+    };
 
     vm.addPonto = function (arg) {
       if (arg) {
@@ -67,7 +123,8 @@
         if ($scope.ponto.horario) {
           $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
           $scope.ponto = '';
-          localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+
+          save()
         }
       }
     };
@@ -107,7 +164,7 @@
       var pontos = (p) ? p : $scope.pontos;
       var pontosAux = angular.copy(pontos);
 
-      if (pontosAux.length % 2 != 0) {
+      if (pontosAux && pontosAux.length % 2 != 0) {
         pontosAux.push(angular.copy($scope.horarioAtual).match(/\d{2}:\d{2}/).join(':'));
       }
 
@@ -126,7 +183,7 @@
         return 0
       var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
       var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
-      var jornada = (d.getDay() == 5) ? "8h" : (d.getDay() == 6 || registro.feriado) ? "0h" : "9h";
+      var jornada = (d.getDay() == 6 || registro.feriado) ? "0h" : (d.getDay() == 5) ? "8h" : "9h";
       var extra = hmh.diff(jornada, horasTrabalhadas);
       registro.extra = extra.toString();
       return extra.toString() || 0;
@@ -160,7 +217,7 @@
           isNegative: function () { return pontoEletronico.user.saldo.sinal == 'N' },
           total: pontoEletronico.user.saldo.total
         }
-      } 
+      }
       return false
     }
 
@@ -193,13 +250,12 @@
         }
       }
 
-      var credito = hmh.sum(registrosCredito, 'minutes').toString() || 0;
-      var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
+      var credito = hmh.sum(registrosCredito, 'minutes').toString() || '0h';
+      var debito = hmh.sum(registroDebito, 'minutes').toString() || '0h';
 
       total = hmh.sub(credito + " " + debito);
-      
-      return total
 
+      return total
     };
 
     vm.bancoDeHorasMes = function () {
@@ -228,8 +284,8 @@
         }
       });
 
-      var credito = hmh.sum(registrosCredito, 'minutes').toString() || 0;
-      var debito = hmh.sum(registroDebito, 'minutes').toString() || 0;
+      var credito = hmh.sum(registrosCredito, 'minutes').toString() || '0h';
+      var debito = hmh.sum(registroDebito, 'minutes').toString() || '0h';
 
       vm.periodo = {};
       vm.periodo.min = dataMin;
@@ -302,14 +358,14 @@
       }
 
       if (!pontoEletronico.user.hasOwnProperty('saldo')) {
-        pontoEletronico.user.saldo = { total: '', sinal: ''}
+        pontoEletronico.user.saldo = { total: '', sinal: '' }
       }
 
       console.log(vm.saldo.total);
 
       pontoEletronico.user.saldo.total = formatPonto(angular.copy(vm.saldo.total.replace(/[^\d]/g, '')));
       pontoEletronico.user.saldo.sinal = angular.copy(vm.saldo.sinal);
-      
+
       save();
 
       vm.fechaModalAdicionarHoras();
@@ -327,7 +383,7 @@
       }
 
       save();
-      
+
       vm.fechaModalAdicionarHoras();
     };
 
@@ -358,6 +414,31 @@
 
     function save() {
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      firesavePonto();
+      firesaveSaldo();
+    }
+
+    function firesaveSaldo() {
+      return firesave('/saldo', pontoEletronico.user.saldo)
+    }
+
+    function firesavePonto() {
+      return firesave('/registros', pontoEletronico.user.registros)
+    }
+
+    function firesave(uri, data) {
+      var fireuri = 'users/' + pontoEletronico.user.uid;
+
+      if (typeof uri === "object") {
+        data = uri
+        uri = null
+      }
+
+      if (typeof uri === "string") {
+        fireuri += uri
+      }
+
+      return firebase.database().ref(fireuri).set(data)
     }
 
     function initializeSaldo() {
@@ -367,10 +448,67 @@
       vm.saldo.total = pontoEletronico.user.saldo.total;
       vm.saldo.sinal = pontoEletronico.user.saldo.sinal;
     }
+
+    function initializeApp() { }
+
+    function authDataCallback(authData) {
+      if (authData) {
+        pontoEletronico.user.uid = authData.uid;
+        console.log("User " + authData.uid + " is logged in with " + authData.provider);
+
+        if ($('[data-modal="login"]').hasClass('active')) {
+          $('[data-modal="login"]').modal('hide');
+        }
+
+        firebase.database().ref('users/' + authData.uid).once('value').then(function (snapshot) {
+          var snapshoptUser = snapshot.val();
+          if (!snapshoptUser) {
+            firesave({
+              uid: authData.uid,
+              name: pontoEletronico.user.name,
+              email: authData.email
+            })
+            firesavePonto();
+            firesaveSaldo();
+          } else {
+            if (!pontoEletronico.user.name || !pontoEletronico.user.email) {
+              pontoEletronico.user.name = snapshoptUser.name;
+              pontoEletronico.user.email = snapshoptUser.email;
+              pontoEletronico.user.uid = snapshoptUser.uid;
+              save()
+            }
+
+            if (snapshoptUser.registros && pontoEletronico.user.registros.length < snapshoptUser.registros.length) {
+              pontoEletronico.user.registros = snapshoptUser.registros;
+              current = $filter('filter')(pontoEletronico.user.registros, { date: today })[0];
+              $scope.current = current;
+              $scope.pontos = current.pontos;
+              save()
+            }
+
+            if (pontoEletronico.user.saldo.total != snapshoptUser.saldo.total) {
+              pontoEletronico.user.saldo = snapshoptUser.saldo;
+              save()
+            }
+          }
+        });
+
+      } else {
+        console.log("User is logged out");
+        $scope.$apply(function () {
+          $('[data-modal="login"]').modal({
+            blurring: true,
+            keyboardShortcuts: false,
+            closable: false
+          }).modal('show');
+        });
+      }
+    };
+
   };
 
   CounterController.$inject = ['$scope', '$filter', '$interval'];
 
-  angular.module('myApp', ['ui.mask']).controller('CounterController', CounterController);
+  angular.module('myApp', ['ui.mask', 'firebase']).controller('CounterController', CounterController);
 
 })();

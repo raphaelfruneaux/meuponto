@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html ng-app="myApp" data-framework="firebase">
 
 <head>
 	<meta charset="utf-8">
@@ -9,17 +9,11 @@
 		var module = window.module || {}
 	</script>
 
-	<link rel="stylesheet" href="dist/css/styles.css">
-	
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.8/angular-locale_pt-br.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script type="text/javascript" src="dist/js/vendors.js"></script>
-	<script type="text/javascript" src="dist/js/main.js"></script>
+<link rel="stylesheet" href="dist/css/styles.css">
 </head>
 
-<body ng-controller="CounterController as counter" ng-cloak>
-	<div class="ui container">
+<body ng-controller="CounterController as counter">
+	<div class="ui container" ng-cloak="">
 		<h1>
 			<i class="calendar icon"></i> {{ dataAtual | date: 'dd MMMM, yyyy' }}
 			<i class="wait icon"></i> {{ horarioAtual }}
@@ -58,8 +52,7 @@
 					</div>
 					<div class="field more-options">
 						<label for="">mais opções</label>
-						<i class="ellipsis horizontal icon" ng-click="counter.modalAdicionarHoras()"></i>
-						<!--<div class="ui dropdown dropdown-settings">
+						<div class="ui dropdown dropdown-settings">
 							<div class="text">
 								<i class="ellipsis horizontal icon"></i>
 							</div>
@@ -67,8 +60,12 @@
 								<div class="item" ng-click="counter.modalAdicionarHoras()">
 									Adicionar horas
 								</div>
+								<div class="divider"></div>
+								<div class="item" ng-click="counter.logout()">
+									Sair
+								</div>
 							</div>
-						</div>-->
+						</div>
 					</div>
 					<input type="submit" id="submit" value="Submit" class="hidden" />
 				</form>
@@ -80,16 +77,16 @@
 				<div class="detail">{{ counter.saidaSugerida() }}</div>
 			</div>
 			<div class="ui label animate" ng-class="{
-          'green': !counter.bancoDeHorasTotal().isNegative,
-          'red': counter.bancoDeHorasTotal().isNegative
-        }">
+					'green': !counter.bancoDeHorasTotal().isNegative,
+					'red': counter.bancoDeHorasTotal().isNegative
+				}">
 				Banco de horas:
 				<div class="detail">{{ counter.bancoDeHorasTotal().toString() || 0 }}</div>
 			</div>
 			<div class="ui label animate" ng-class="{
-					'green': !counter.bancoDeHorasMes().isNegative,
-          'red': counter.bancoDeHorasMes().isNegative
-        }">
+				'green': !counter.bancoDeHorasMes().isNegative,
+				'red': counter.bancoDeHorasMes().isNegative
+			}">
 				Banco de horas (ref: {{ counter.periodo.min | date:'dd MMM' }} a {{ counter.periodo.max | date:'dd MMM' }} ):
 				<div class="detail">{{ counter.bancoDeHorasMes().toString() || 0 }}</div>
 			</div>
@@ -153,9 +150,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="ui horizontal divider">
-			Dias anteriores
-		</div>
+		<div class="ui horizontal divider">Dias anteriores</div>
 		<div class="previous-day">
 			<table class="ui very basic collapsing celled table">
 				<tbody>
@@ -231,25 +226,26 @@
 					</div>
 				</div>
 			</div>
-			-->
+		-->
 		<!--
 			<div class="bottom-bar">
-			<button class="ui blue basic button">
-				<i class="icon download"></i>
-				Importar JSON
-			</button>
-			<button class="ui green basic button">
-				<i class="icon upload"></i>
-				Exportar para JSON
-			</button>
-		</div> -->
+				<button class="ui blue basic button">
+					<i class="icon download"></i>
+					Importar JSON
+				</button>
+				<button class="ui green basic button">
+					<i class="icon upload"></i>
+					Exportar para JSON
+				</button>
+			</div> 
+		-->
 	</div>
 
 	<div class="ui modal mini" data-modal="adicionar-horas">
 		<i class="close icon" ng-click="counter.fechaModalAdicionarHoras(formSalvarSaldo);"></i>
 		<div class="header">Adicionar Horas</div>
 		<div class="content center">
-			<div class="ui form">
+			<div class="ui form horizontal">
 				<form name="formSalvarSaldo" novalidate>
 					<div class="field">
 						<label>Total</label>
@@ -276,6 +272,43 @@
 		</div>
 	</div>
 
+	<div class="ui modal mini" data-modal="login">
+		<div class="header">Login</div>
+		<div class="content">
+			<div class="ui form">
+				<form name="formLogin" ng-submit="counter.login()" novalidate>
+					<div class="field block">
+						<input type="text" class="input-block" name="username" placeholder="Usuario" ng-model="user.email" autofocus required>
+					</div>
+					<div class="field block">
+						<input type="password" class="input-block" name="password" placeholder="Senha" ng-model="user.password" required>
+					</div>
+				</form>
+				<div class="ui negative message" ng-if="loginForm.hasError">
+					<i class="close icon" ng-click="loginForm.hasError = false;"></i>
+					<div class="header">Oops! Sorry but an error occurred.</div>
+					<p>{{ loginForm.error.message }}</p>
+				</div>
+			</div>
+		</div>
+		<div class="actions">
+			<button type="button" class="ui fluid button teal" ng-click="counter.login()" ng-disabled="formLogin.$invalid" ng-class="{
+					'loading': counter.loading
+				}">
+				<u>Sign in</u> or <u>Sign up</u>
+			</button>
+		</div>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.8/angular-locale_pt-br.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+	<script src="//www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angularFire/2.1.0/angularfire.min.js"></script>
+
+	<script src="dist/js/vendors.js"></script>
+	<script src="src/js/main.js"></script>
 	<script>
 		$(document).ready(function () {
 			$('.ui.dropdown').dropdown();
