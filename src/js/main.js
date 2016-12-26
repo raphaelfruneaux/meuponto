@@ -8,56 +8,10 @@
     storageBucket: "meuponto-22c8a.appspot.com",
     messagingSenderId: "453391659544"
   };
+
   firebase.initializeApp(config);
 
   function CounterController($scope, $filter, $interval) {
-    var vm = this;
-
-    vm.authDataCallback = function (authData) {
-      if (authData) {
-        console.log("User " + authData.uid + " is logged in with " + authData.provider);
-
-        if ($('[data-modal="login"]').hasClass('active')) {
-          $('[data-modal="login"]').modal('hide');
-        }
-
-        firebase.database().ref('users/' + authData.uid).once('value').then(function (snapshot) {
-          console.log('SNAPSHOT:', snapshot.val());
-          console.log('PONTOELETRONICO:', pontoEletronico);
-        })
-
-        // firebase.database().ref('users/' + authData.uid).set({
-        //   uid: authData.uid,
-        //   name: pontoEletronico.user.name,
-        //   email: pontoEletronico.user.email
-        // });
-
-        // firebase.database().ref('users/' + authData.uid + '/saldo').set({
-        //   total: pontoEletronico.user.saldo.total,
-        //   sinal: pontoEletronico.user.saldo.sinal
-        // })
-
-        // firebase.database().ref('users/' + authData.uid + '/registros').set(pontoEletronico.user.registros)
-
-      } else {
-        console.log("User is logged out");
-        $scope.$apply(function () {
-          $('[data-modal="login"]').modal({
-            blurring: true,
-            keyboardShortcuts: false,
-            closable: false
-          }).modal('show');
-        });
-      }
-    };
-
-    firebase.auth().onAuthStateChanged(vm.authDataCallback);
-
-
-    vm.user = null;
-    vm.saldo = { total: '', sinal: '' };
-    vm.loading = false;
-
     Date.prototype.today = function () {
       return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
     }
@@ -66,11 +20,18 @@
       return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
     }
 
+    firebase.auth().onAuthStateChanged(authDataCallback);
+
+    var vm = this;
+    vm.user = null;
+    vm.saldo = { total: '', sinal: '' };
+    vm.loading = false;
+
     var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
     if (!dataStorage) {
       var pontoEletronico = { user: {} };
-      pontoEletronico.user.name = prompt("Informe o seu nome:");
-      pontoEletronico.user.email = prompt("Informe o seu email:");
+      // pontoEletronico.user.name = prompt("Informe o seu nome:");
+      // pontoEletronico.user.email = prompt("Informe o seu email:");
       pontoEletronico.user.registros = [];
       pontoEletronico.user.saldo = { total: '', sinal: '' };
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
@@ -102,7 +63,7 @@
     $scope.pontoEletronico = pontoEletronico;
     $scope.showInputPonto = false;
     $scope.horario_anterior = {};
-    $scope.loginForm = { hasError: false, error: {}}
+    $scope.loginForm = { hasError: false, error: {} }
 
     vm.login = function () {
       vm.loading = true;
@@ -114,13 +75,13 @@
 
             if (err.code == 'auth/user-not-found') {
               firebase.auth().createUserWithEmailAndPassword($scope.user.email, $scope.user.password)
-              .catch(function (err) {
-                if (err) {
-                  console.error('createUserWithEmailAndPasswordERROR', err);
-                }
-              }).then(function () {
-                vm.loading = false;
-              })
+                .catch(function (err) {
+                  if (err) {
+                    console.error('createUserWithEmailAndPasswordERROR', err);
+                  }
+                }).then(function () {
+                  vm.loading = false;
+                })
             } else {
               $scope.loginForm.hasError = true;
               $scope.loginForm.error = err;
@@ -132,6 +93,8 @@
     };
 
     vm.logout = function () {
+      save();
+
       firebase.auth().signOut().then(function () {
         // Sign-out successful.
         vm.user = {}
@@ -156,7 +119,8 @@
         if ($scope.ponto.horario) {
           $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
           $scope.ponto = '';
-          localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+
+          save()
         }
       }
     };
@@ -446,6 +410,31 @@
 
     function save() {
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      firesavePonto();
+      firesaveSaldo();
+    }
+
+    function firesaveSaldo() {
+      return firesave('/saldo', pontoEletronico.user.saldo)
+    }
+
+    function firesavePonto() {
+      return firesave('/registros', pontoEletronico.user.registros)
+    }
+
+    function firesave(uri, data) {
+      var fireuri = 'users/' + pontoEletronico.user.uid;
+
+      if (typeof uri === "object") {
+        data = uri
+        uri = null
+      }
+
+      if (typeof uri === "string") {
+        fireuri += uri
+      }
+
+      return firebase.database().ref(fireuri).set(data)
     }
 
     function initializeSaldo() {
@@ -455,6 +444,50 @@
       vm.saldo.total = pontoEletronico.user.saldo.total;
       vm.saldo.sinal = pontoEletronico.user.saldo.sinal;
     }
+
+    function initializeApp() {}
+
+    function authDataCallback(authData) {
+      if (authData) {
+        pontoEletronico.user.uid = authData.uid;
+        console.log("User " + authData.uid + " is logged in with " + authData.provider);
+
+        if ($('[data-modal="login"]').hasClass('active')) {
+          $('[data-modal="login"]').modal('hide');
+        }
+
+        firebase.database().ref('users/' + authData.uid).once('value').then(function (snapshot) {
+          if (!snapshot.val()) {
+            firesave({
+              uid: authData.uid,
+              name: pontoEletronico.user.name,
+              email: authData.email
+            })
+            firesaveSaldo()
+            firesavePonto()
+          } else {
+            if (pontoEletronico.user.registros.length < snapshot.val().registros.length) {
+              pontoEletronico.user.registros = snapshot.val().registros;
+            }
+
+            if (pontoEletronico.user.saldo.total != snapshot.val().saldo.total) {
+              pontoEletronico.user.saldo = snapshot.val().saldo;
+            }
+          }
+        });
+
+      } else {
+        console.log("User is logged out");
+        $scope.$apply(function () {
+          $('[data-modal="login"]').modal({
+            blurring: true,
+            keyboardShortcuts: false,
+            closable: false
+          }).modal('show');
+        });
+      }
+    };
+
   };
 
   CounterController.$inject = ['$scope', '$filter', '$interval'];
