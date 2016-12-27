@@ -116,7 +116,9 @@
 
         var day = $filter('filter')(pontoEletronico.user.registros, { date: arg.date })[0];
         day.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
-        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+      
+        save();
+
         $scope.horario_anterior[arg.date] = '';
         vm.showInputPonto(arg.date);
       } else {
@@ -124,7 +126,7 @@
           $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
           $scope.ponto = '';
 
-          save()
+          save();
         }
       }
     };
