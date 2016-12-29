@@ -519,6 +519,7 @@
 
             if (pontoEletronico.user.saldo.total != snapshoptUser.saldo.total) {
               pontoEletronico.user.saldo = snapshoptUser.saldo;
+              vm.saldo = pontoEletronico.user.saldo;
               save()
             }
           }
