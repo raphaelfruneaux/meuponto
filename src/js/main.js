@@ -30,6 +30,7 @@
       var pontoEletronico = { user: { name: '', email: '' } };
       pontoEletronico.user.registros = [];
       pontoEletronico.user.saldo = { total: '', sinal: '' };
+      pontoEletronico.user.resumo = { saldo: {} }
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
     } else {
       var pontoEletronico = dataStorage;
@@ -116,7 +117,9 @@
 
         var day = $filter('filter')(pontoEletronico.user.registros, { date: arg.date })[0];
         day.pontos.push(formatPonto(angular.copy($scope.horario_anterior[arg.date])));
-        localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
+
+        save();
+
         $scope.horario_anterior[arg.date] = '';
         vm.showInputPonto(arg.date);
       } else {
@@ -124,7 +127,7 @@
           $scope.pontos.push(formatPonto(angular.copy($scope.ponto.horario)));
           $scope.ponto = '';
 
-          save()
+          save();
         }
       }
     };
@@ -179,7 +182,7 @@
 
     vm.totalHoraExtra = function (r) {
       var registro = r || current;
-      if (registro === undefined || registro.pontos.length == 0)
+      if (registro === undefined || !registro.hasOwnProperty('pontos') || registro.pontos.length == 0)
         return 0
       var horasTrabalhadas = vm.horasTrabalhadas(registro.pontos);
       var d = new Date(registro.date.split('-')[0], registro.date.split('-')[1] - 1, registro.date.split('-')[2]);
@@ -191,7 +194,7 @@
 
     vm.verificaHoraExtra = function (r) {
       var r = r || current;
-      if (r === undefined || r.pontos.length == 0)
+      if (r === undefined || !r.hasOwnProperty('pontos') || r.pontos.length == 0)
         return 0
       var horasExtra = vm.totalHoraExtra(r);
       var regex = /\-/;
@@ -254,6 +257,21 @@
       var debito = hmh.sum(registroDebito, 'minutes').toString() || '0h';
 
       total = hmh.sub(credito + " " + debito);
+      let copyTotal = clone(total);
+
+      if (!pontoEletronico.user.hasOwnProperty('resumo')) {
+        pontoEletronico.user.resumo = {}
+      }
+
+      if (!pontoEletronico.user.resumo.hasOwnProperty('saldo')) {
+        pontoEletronico.user.resumo = { saldo: {} }
+      }
+
+      delete copyTotal.toString;
+
+      pontoEletronico.user.resumo.saldo = copyTotal;
+
+      firesaveResumo();
 
       return total
     };
@@ -416,6 +434,13 @@
       localStorage.setItem("pontoEletronico", JSON.stringify(pontoEletronico));
       firesavePonto();
       firesaveSaldo();
+      firesaveResumo();
+    }
+
+    function firesaveResumo() {
+      if (pontoEletronico.user.uid) {
+        return firesave('/resumo', pontoEletronico.user.resumo)
+      }
     }
 
     function firesaveSaldo() {
@@ -470,6 +495,7 @@
             })
             firesavePonto();
             firesaveSaldo();
+            firesaveResumo();
           } else {
             if (!pontoEletronico.user.name || !pontoEletronico.user.email) {
               pontoEletronico.user.name = snapshoptUser.name;
@@ -481,6 +507,11 @@
             if (snapshoptUser.registros && pontoEletronico.user.registros.length < snapshoptUser.registros.length) {
               pontoEletronico.user.registros = snapshoptUser.registros;
               current = $filter('filter')(pontoEletronico.user.registros, { date: today })[0];
+              if (!current.hasOwnProperty('pontos')) {
+                console.log(current)
+                current.pontos = [];
+              }
+
               $scope.current = current;
               $scope.pontos = current.pontos;
               save()
@@ -488,6 +519,7 @@
 
             if (pontoEletronico.user.saldo.total != snapshoptUser.saldo.total) {
               pontoEletronico.user.saldo = snapshoptUser.saldo;
+              vm.saldo = pontoEletronico.user.saldo;
               save()
             }
           }
@@ -504,6 +536,15 @@
         });
       }
     };
+
+    function clone(obj) {
+      if (null == obj || "object" != typeof obj) return obj;
+      var copy = obj.constructor();
+      for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+      }
+      return copy;
+    }
 
   };
 
