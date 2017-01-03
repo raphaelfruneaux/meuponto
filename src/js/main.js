@@ -284,6 +284,10 @@
       var dataBase = today.split('-');
       var mesRef = dataBase[2] >= 21 ? parseInt(dataBase[1]) + 1 : parseInt(dataBase[1]);
 
+      if (mesRef < 10) {
+        mesRef = "0" + mesRef;
+      }
+
       var mesMin = (mesRef == 1) ? 12 : (mesRef - 1);
       mesMin = (mesMin < 10) ? "0" + mesMin : mesMin;
 
