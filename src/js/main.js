@@ -370,6 +370,24 @@
       $('[data-modal="adicionar-horas"]').modal('hide');
     };
 
+    vm.modalEditarPerfil = function () {
+      $('[data-modal="perfil"]').modal({
+        blurring: true
+      }).modal('show');
+    };
+
+    vm.editarPerfil = function () {
+      firesave({
+        uid: pontoEletronico.user.uid,
+        name: pontoEletronico.user.name,
+        email: pontoEletronico.user.email
+      });
+
+      save();
+
+      $('[data-modal="perfil"]').modal('hide');
+    };
+
     vm.salvarSaldoAnterior = function () {
       if (!vm.saldo.total || !vm.saldo.sinal) {
         return false

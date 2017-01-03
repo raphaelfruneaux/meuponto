@@ -60,6 +60,9 @@
 								<div class="item" ng-click="counter.modalAdicionarHoras()">
 									Adicionar horas
 								</div>
+								<div class="item" ng-click="counter.modalEditarPerfil()">
+									Editar perfil
+								</div>
 								<div class="divider"></div>
 								<div class="item" ng-click="counter.logout()">
 									Sair
@@ -296,6 +299,31 @@
 					'loading': counter.loading
 				}">
 				<u>Sign in</u> or <u>Sign up</u>
+			</button>
+		</div>
+	</div>
+
+	<div class="ui modal mini" data-modal="perfil">
+		<div class="header">Perfil</div>
+		<div class="content">
+			<div class="ui form">
+				<form name="formPerfil" ng-submit="counter.editarPerfil()" novalidate>
+					<div class="field block">
+						<label>Nome</label>
+						<input type="text" class="input-block" name="nome" placeholder="Nome" ng-model="pontoEletronico.user.name" required>
+					</div>
+					<div class="field block">
+						<label>Email</label>
+						<input type="text" class="input-block" name="email" placeholder="Email" ng-model="pontoEletronico.user.email" required>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="actions">
+			<button type="button" class="ui button green" ng-click="counter.editarPerfil()" ng-disabled="formPerfil.$invalid" ng-class="{
+					'loading': counter.loading
+				}">
+				Salvar
 			</button>
 		</div>
 	</div>
