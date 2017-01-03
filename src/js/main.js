@@ -294,7 +294,9 @@
       var mesMax = (mesRef < 12) ? (mesRef + 1) : 1;
       mesMax = (mesMax < 10) ? "0" + mesMax : mesMax;
 
-      var dataMin = dataBase[0] + '-' + mesMin + '-21';
+      var anoMin = (mesRef == 1) ? dataBase[0] - 1: dataBase[0];
+
+      var dataMin = anoMin + '-' + mesMin + '-21';
       var dataMax = dataBase[0] + '-' + mesRef + '-20';
 
       angular.forEach(pontoEletronico.user.registros, function (item) {
