@@ -24,6 +24,7 @@
     vm.user = null;
     vm.saldo = { total: '', sinal: '' };
     vm.loading = false;
+    vm.globalLoading = true;
 
     var dataStorage = JSON.parse(localStorage.getItem("pontoEletronico"));
     if (!dataStorage) {
@@ -543,8 +544,11 @@
           }
         });
 
+        vm.globalLoading = false;
+
       } else {
         console.log("User is logged out");
+        vm.globalLoading = false;
         $scope.$apply(function () {
           $('[data-modal="login"]').modal({
             blurring: true,
