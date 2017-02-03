@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html ng-app="meuponto-app" data-framework="firebase">
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ponto</title>
+	<script>
+		var module = window.module || {}
+	</script>
+
+    <!--<link rel="stylesheet" href="dist/css/styles.css">-->
+
+    <!-- build:css({.tmp/serve,src}) assets/styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="../bower_components/animate.css/animate.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:css({.tmp/serve,src}) assets/styles/app.css -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="app/style.css">
+    <!-- endinject -->
+    <!-- endbuild -->
+
+</head>
+<body ng-cloak>
+
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <ui-view></ui-view>
+
+    <!-- build:js(src) assets/scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-animate/angular-animate.js"></script>
+    <script src="../bower_components/angular-aria/angular-aria.js"></script>
+    <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="../bower_components/moment/moment.js"></script>
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/semantic/dist/semantic.js"></script>
+    <script src="../bower_components/angular-ui-mask/dist/mask.js"></script>
+    <script src="../bower_components/angular-locale-pt-br/angular-locale_pt-br.js"></script>
+    <script src="../bower_components/angular-mocks/angular-mocks.js"></script>
+    <script src="../bower_components/angular-semantic-ui/dist/angular-semantic-ui.js"></script>
+    <script src="../bower_components/angular-semantic-ui/dist/angular-semantic-ui.min.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp/serve,.tmp/partials,src}) assets/scripts/app.js -->
+    <!-- inject:js -->
+    <script src="js/vendors/transition.min.js"></script>
+    <script src="js/vendors/semantic.min.js"></script>
+    <script src="js/vendors/popup.min.js"></script>
+    <script src="js/vendors/modal.min.js"></script>
+    <script src="js/vendors/dropdown.js"></script>
+    <script src="js/index.module.js"></script>
+    <script src="js/controllers/home.controller.js"></script>
+    <script src="js/index.run.js"></script>
+    <script src="js/index.route.js"></script>
+    <script src="js/index.constants.js"></script>
+    <script src="js/index.config.js"></script>
+    <!-- endinject -->
+
+    <!-- inject:partials -->
+    <!-- angular templates will be automatically converted in js and inserted here -->
+    <!-- endinject -->
+    <!-- endbuild -->
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.8/angular-locale_pt-br.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
+	<script src="//www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angularFire/2.1.0/angularfire.min.js"></script>
+
+	<!--<script src="dist/js/vendors.js"></script>
+	<script src="dist/js/main.js"></script>
+	<script src="dist/js/templates.js"></script>-->
+
+	<script>
+		$(document).ready(function () {
+			$('.ui.dropdown').dropdown();
+			$('.ui.dropdown-settings').dropdown({
+				action: 'hide'
+			});
+			$('.icon.button').popup();
+		});
+	</script>
+</body>
+
+</html>

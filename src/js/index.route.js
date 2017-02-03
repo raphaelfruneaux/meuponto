@@ -14,17 +14,8 @@
       isSecurity: true
     };
 
-    // var loginRoute = {
-    //   name: 'login',
-    //   url: '/auth/login',
-    //   templateUrl: 'views/login.html',
-    //   controller: 'AuthController',
-    //   controllerAs: 'auth'
-    // }
-
     $stateProvider
       .state(homeRoute);
-      // .state(loginRoute);
 
     $urlRouterProvider.otherwise('/');
   }

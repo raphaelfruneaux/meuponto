@@ -3,6 +3,7 @@ module.exports = {
   bundle: {
     main: {
       scripts: [
+        './src/js/**/*.module.js',
         './src/js/index.*.js',
         './src/js/controllers/*.js',
         './src/js/directives/*.js',

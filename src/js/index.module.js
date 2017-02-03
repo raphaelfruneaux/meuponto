@@ -2,14 +2,15 @@
   'use strict';
 
   angular.module('meuponto-app', [
-    // 'ngAnimate',
-    // 'ngSanitize',
-    // 'ngAria',
+    'ngAnimate',
+    'ngAria',
+    'ngSanitize',
     'ui.router',
+    'angularify.semantic',
     'meuponto-controllers',
     'meuponto-directives',
     'meuponto-filters',
-    'meuponto-services',
+    'meuponto-services'
   ]);
 
   angular.module('meuponto-controllers', []);
