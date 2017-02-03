@@ -6,16 +6,15 @@ var browsersync = require('browser-sync').create();
 var babel = require('gulp-babel');
 var concat = require('gulp-concat');
 var cleanCSS = require('gulp-clean-css');
-var autoprefixer = require('gulp-autoprefixer')
+var autoprefixer = require('gulp-autoprefixer');
+var ngAnnotate = require('gulp-ng-annotate');
+var templateCache = require('gulp-angular-templatecache');
+var htmlmin = require('gulp-htmlmin');
 
 var bundleConfig = require('./bundle.config')
 
-gulp.task('sass', function(){
-  console.log('----------------------');
-  console.log("Salvando em: "+ 'css/style.css');
-  console.log('----------------------');
-
-  return gulp.src('./src/css/*.scss')
+gulp.task('sass', function () {
+  return gulp.src('./src/css/style.scss')
     .pipe(sass()) // Converts Sass to CSS with gulp-sass
     .pipe(autoprefixer())
     .pipe(gulp.dest('./src/css/'))
@@ -23,13 +22,30 @@ gulp.task('sass', function(){
 });
 
 gulp.task('browser-sync', function () {
-    browsersync.init({
-        server: {
-          baseDir: './'
-        },
-        open: false
-    });
+  browsersync.init({
+    server: {
+      baseDir: './'
+    },
+    open: false
+  });
 });
+
+gulp.task('bundle-html', function () {
+  return gulp.src('./src/views/**.*html')
+    .pipe(htmlmin({
+      removeComments: true,
+      removeAttributeQuotes: true,
+      removeEmptyAttributes: true,
+      collapseWhitespace: true,
+      collapseBooleanAttributes: true,
+      collapseInlineTagWhitespace: true,
+    }))
+    .pipe(templateCache({
+      module: 'meuponto-app',
+      root: 'views'
+    }))
+    .pipe(gulp.dest('./dist/js/'))
+})
 
 gulp.task('bundle-css', function () {
   return gulp.src(bundleConfig.bundle.main.styles)
@@ -58,12 +74,13 @@ gulp.task('bundle-js', function () {
       compact: true,
       sourceMaps: true
     }))
+    .pipe(ngAnnotate())
     .pipe(concat('./main.js'))
     .pipe(gulp.dest('./dist/js/'))
 })
 
 gulp.task('bundle', function () {
-  runsequence('clean', 'bundle-js', 'bundle-css');
+  runsequence('clean', 'bundle-js', 'bundle-html', 'bundle-css');
 
   return gulp.src(bundleConfig.copy)
     .pipe(gulp.dest('./dist/themes/'))
@@ -75,9 +92,11 @@ gulp.task('clean', function () {
   return del('./dist/**/*')
 })
 
-gulp.task('default', function() {
-	runsequence('sass', 'bundle', 'browser-sync');
-  
-  gulp.watch('./src/css/*.scss',['sass', 'bundle-css']);
-  gulp.watch('index.html').on('change', browsersync.reload);
+gulp.task('default', function () {
+  runsequence('sass', 'bundle', 'browser-sync');
+
+  gulp.watch('./src/css/*.scss', ['sass', 'bundle-css']);
+  gulp.watch(['./src/js/**/*.js', '!./src/js/vendors/**'], ['bundle-js'])
+  gulp.watch('./src/views/**/*.html', ['bundle-html'])
+  gulp.watch('**/*.html').on('change', browsersync.reload);
 });
