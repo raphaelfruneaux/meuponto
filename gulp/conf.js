@@ -12,6 +12,14 @@ exports.paths = {
 exports.wiredep = {
   exclude: [],
   directory: 'bower_components',
+  overrides: {
+    "semantic": {
+      "main": [
+        "dist/semantic.css",
+        "dist/semantic.js"
+      ]
+    }
+  }
 }
 
 exports.gulploadplugins = {

@@ -1,6 +1,0 @@
-!function(){"use strict";angular.module("meuponto-app",["ui.router","meuponto-controllers","meuponto-directives","meuponto-filters","meuponto-services"]),angular.module("meuponto-controllers",[]),angular.module("meuponto-directives",[]),angular.module("meuponto-filters",[]),angular.module("meuponto-services",[])}();
-
-!function(){"use strict";var a={apiKey:"AIzaSyAG7SiJpRPyCuNKOnC3MWh3bsxrjF3MkX8",authDomain:"meuponto-22c8a.firebaseapp.com",databaseURL:"https://meuponto-22c8a.firebaseio.com",storageBucket:"meuponto-22c8a.appspot.com",messagingSenderId:"453391659544"};angular.module("meuponto-app").constant("FIREBASE_CONF",a)}();
-!function(){"use strict";function e(e,o){var r={name:"home",url:"/",templateUrl:"views/home.html",controller:"HomeController",controllerAs:"home",isSecurity:!0};e.state(r),o.otherwise("/")}e.$inject=["$stateProvider","$urlRouterProvider"],angular.module("meuponto-app").config(e)}();
-!function(){"use strict";function n(){}angular.module("meuponto-app").run(n)}();
-!function(){function o(o,e,l,n){l.info(":: called homeController")}o.$inject=["$scope","$rootScope","$log","$state"],angular.module("meuponto-controllers").controller("HomeController",o)}();
